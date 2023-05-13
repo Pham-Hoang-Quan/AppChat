@@ -31,7 +31,6 @@ const Test = () => {
     // Khi component được tạo, thiết lập kết nối WebSocket
     useEffect(() => {
         const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-
         newSocket.addEventListener("open", (event) => {
             console.log("Kết nối WebSocket đã được thiết lập", event);
             setSocket(newSocket);
@@ -43,6 +42,26 @@ const Test = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleLogin = () => {
+            // Gửi yêu cầu đăng nhập đến server WebSocket
+            const requestData = {
+                action: "onchat",
+                data: {
+                    event: "LOGIN",
+                    data: {
+                        user: sessionStorage.getItem('username'),
+                        pass: sessionStorage.getItem('password'),
+                    },
+                },
+            };
+    
+            socket.send(JSON.stringify(requestData));
+            console.log("Đã gửi yêu cầu đăng nhập ở trang HOME")
+        };
+    }, []);
+
+    
     const handleRegister = () => {
         // Gửi yêu cầu đăng nhập đến server WebSocket
         const requestData = {
@@ -56,39 +75,15 @@ const Test = () => {
         };
         socket.send(JSON.stringify(requestData));
 
-        const loginData = {
-            action: 'onchat',
-            data: {
-              event: 'LOGIN',
-              data: {
-                user: user,
-                pass: pass,
-              },
-            },
-          };
-          socket.send(JSON.stringify(loginData));
 
-        
+
+
     };
-    {
-        
-      }
+
+    
 
 
-      const handleLogin = () => {
-        // Gửi yêu cầu đăng nhập đến server WebSocket
-        const requestData = {
-            action: "onchat",
-            data: {
-                event: "LOGIN",
-                data: {
-                    user: user,
-                    pass: pass,
-                },
-            },
-        };
-        socket.send(JSON.stringify(requestData));
-    };
+
     // Sau khi đăng nhập thành công, set socket và lưu trữ thông tin đăng nhập
     useEffect(() => {
         if (socket) {
@@ -104,7 +99,7 @@ const Test = () => {
     }, [socket]);
 
     return (
-        
+
         <><MDBContainer style={{ marginTop: '100px' }} fluid>
 
             <MDBCard className='text-black m-5' style={{ borderRadius: '25px', marginTop: '50px' }}>
@@ -155,7 +150,7 @@ const Test = () => {
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                     placeholder="Nhập mật khẩu" />
-                <button onClick={handleLogin}>Đăng nhập</button>
+                {/* <button onClick={handleLogin}>Đăng nhập</button> */}
 
             </div></>
     );
