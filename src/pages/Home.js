@@ -7,12 +7,14 @@ import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
 
-import Login from "../componemts/Login";
-
 export default function Home() {
     const [socket, setSocket] = useState(null);
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+
+    const [user, setUser] = useState("");
+    const [pass, setPass] = useState("");
+
+    const [userList, setUserList] = useState([]);
 
     useEffect(() => {
         const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
@@ -20,6 +22,7 @@ export default function Home() {
         newSocket.addEventListener("open", (event) => {
             console.log("Kết nối WebSocket đã được thiết lập", event);
             setSocket(newSocket);
+
         });
         
         return () => {
@@ -28,35 +31,95 @@ export default function Home() {
         };
     }, []);
 
-    useEffect(() => {
-        // Kiểm tra xem có thông tin đăng nhập trong localStorage hay không
-        const savedUsername = localStorage.getItem('username');
-        const savedPassword = localStorage.getItem('password');
-        if (savedUsername && savedPassword) {
-          setUsername(savedUsername);
-          setPassword(savedPassword);
-          handleLogin();
-          console.log(username + password)
-        }
-      }, []);
-      const handleLogin = () => {
-        // Gửi thông tin đăng nhập tới WebSocket Server
-        const loginData = {
-          action: 'onchat',
-          data: {
-            event: 'LOGIN',
-            data: {
-              user: username,
-              pass: password,
-            },
-          },
-        };
-        socket.send(JSON.stringify(loginData));
-    }  
+
+    // const handleGetUserList = () => {
+    //     // Gửi yêu cầu lấy danh sách user tới WebSocket Server
+    //     const loginData = {
+    //         action: 'onchat',
+    //         data: {
+    //             event: 'LOGIN',
+    //             data: {
+    //                 user: sessionStorage.getItem('username'),
+    //                 pass: sessionStorage.getItem('password'),
+    //                 // user: user,
+    //                 // pass: pass,
+    //             },
+    //         },
+    //     };
+    //     socket.send(JSON.stringify(loginData));
+    //     console.log("Đã gửi thông tin login cho server")
+    //     const userList = {
+    //         action: 'onchat',
+    //         data: {
+    //             event: 'GET_USER_LIST',
+    //         },
+    //     };
+    //     socket.send(JSON.stringify(userList));
+    //     console.log("Đã gửi yêu cầu lấy danh sách cho server")
+    //     socket.onmessage = (event) => {
+    //         const response = JSON.parse(event.data);
+    //         if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+    //             const users = response.data;
+    //             setUserList(users);
+    //         }
+    //     }
+    //     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+
+    //     newSocket.addEventListener("open", (event) => {
+    //         console.log("Kết nối WebSocket đã được thiết lập", event);
+    //         setSocket(newSocket);
+    //     });
+    // }
+
+    // const loginAndGetUserList = () => {
+    //     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+
+    //     newSocket.addEventListener("open", (event) => {
+    //         console.log("Kết nối WebSocket đã được thiết lập", event);
+    //         setSocket(newSocket);
+    //     });
+    //     const loginData = {
+    //         action: 'onchat',
+    //         data: {
+    //             event: 'LOGIN',
+    //             data: {
+    //                 // user: sessionStorage.getItem('username'),
+    //                 // code: sessionStorage.getItem('password'),
+    //                 user: user,
+    //                 pass: pass,
+    //             },
+    //         },
+    //     };
+    //     socket.send(JSON.stringify(loginData));
+    //     console.log("Đã gửi thông tin login cho server")
+    //     const handleGetUserList = () => {
+    //         // Gửi yêu cầu lấy danh sách user tới WebSocket Server
+    //         const userList = {
+    //             action: 'onchat',
+    //             data: {
+    //                 event: 'GET_USER_LIST',
+    //             },
+    //         };
+    //         socket.send(JSON.stringify(userList));
+    //         console.log("Đã gửi yêu cầu lấy danh sách cho server")
+    //         socket.onmessage = (event) => {
+    //             const response = JSON.parse(event.data);
+    //             if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+    //                 const users = response.data;
+    //                 setUserList(users);
+    //             }
+    //         }
+    //     }
+    // }
+
+
+
+
+
     return (
         <><Header /><MDBContainer fluid className="py-5" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
-                <UserList />
+                <UserList userList={userList} />
                 <ChatBox />
             </MDBRow>
         </MDBContainer></>

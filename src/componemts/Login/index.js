@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import {useHistory} from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import { MDBContainer, MDBCol, MDBRow, MDBBtn, MDBIcon, MDBInput, MDBCheckbox } from 'mdb-react-ui-kit';
 
 
@@ -10,7 +11,9 @@ const Login = () => {
   const [socket, setSocket] = useState(null);
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
   const [connected, setConnected] = useState(false);
-  const history = useHistory();
+  // const history = useHistory();
+  const [userList, setUserList] = useState([]);
+  const history = createBrowserHistory();
 
 
   // Khi component được tạo, thiết lập kết nối WebSocket
@@ -18,20 +21,21 @@ const Login = () => {
     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
     newSocket.addEventListener("open", (event) => {
-        console.log("Kết nối WebSocket đã được thiết lập", event);
-        setSocket(newSocket);
+      console.log("Kết nối WebSocket đã được thiết lập", event);
+      setSocket(newSocket);
     });
 
     return () => {
-        // Đóng kết nối WebSocket khi component bị hủy
-        newSocket.close();
+      // Đóng kết nối WebSocket khi component bị hủy
+      newSocket.close();
     };
-}, []);
+  }, []);
 
   const register = () => {
     window.location.href = '/register';
   }
-  const handleLogin = () => {
+
+  const loginAndGetUserList = () => {
     // Kiểm tra nếu chưa nhập tên đăng nhập hoặc mật khẩu thì hiển thị thông báo lỗi
     if (!username || !password) {
       setError('Vui lòng nhập tên đăng nhập và mật khẩu');
@@ -43,40 +47,53 @@ const Login = () => {
       setError('Không thể kết nối đến WebSocket Server');
       return;
     }
-    // Gửi thông tin đăng nhập tới WebSocket Server
+
     const loginData = {
       action: 'onchat',
       data: {
         event: 'LOGIN',
         data: {
+          // user: sessionStorage.getItem('username'),
+          // code: sessionStorage.getItem('password'),
           user: username,
           pass: password,
         },
       },
     };
     socket.send(JSON.stringify(loginData));
-
+    console.log("Đã gửi thông tin login cho server")
     
-  };
-  useEffect(() => {
-    // Kiểm tra xem có thông tin đăng nhập trong localStorage hay không
-    const savedUsername = localStorage.getItem('username');
-    const savedPassword = localStorage.getItem('password');
-    if (savedUsername && savedPassword) {
-      setUsername(savedUsername);
-      setPassword(savedPassword);
-      handleLogin();
-    }
-  }, []);
+      // Gửi yêu cầu lấy danh sách user tới WebSocket Server
+      const userList = {
+        action: 'onchat',
+        data: {
+          event: 'GET_USER_LIST',
+        },
+      };
+      socket.send(JSON.stringify(userList));
+      console.log("Đã gửi yêu cầu lấy danh sách cho server")
+      socket.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+        if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+          const users = response.data;
+          setUserList(users);
+          console.log("đã lưu vào users")
+          history.push('/', {userList : users})
+          console.log("Đã chuyển sang trang '/'")
+          window.location.href = '/'
+        }
+      }
+    
+  }
 
   // Sau khi đăng nhập thành công, set socket và lưu trữ thông tin đăng nhập
   useEffect(() => {
     if (isLoginSuccess) {
       // Lưu trữ thông tin đăng nhập vào localStorage
-      localStorage.setItem('username', username);
-      localStorage.setItem('password', password);
+      sessionStorage.setItem('username', username);
+      sessionStorage.setItem('password', password);
     }
-  
+
     if (socket) {
       socket.onmessage = (event) => {
         const responseData = JSON.parse(event.data);
@@ -84,14 +101,13 @@ const Login = () => {
           // Đăng nhập thành công
           setIsLoginSuccess(true);
           // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-          history.push('/'); // Chuyển đến trang chủ
-          window.location.href = '/';
+          sessionStorage.setItem('relogin_code', responseData.data.RE_LOGIN_CODE);
         }
       };
     }
   }, [socket, isLoginSuccess, username, password]);
 
-  
+
 
   return (
     <MDBContainer fluid className="p-3 my-5 h-custom">
@@ -132,7 +148,7 @@ const Login = () => {
             <a href="!#">Forgot password?</a>
           </div>
           <div className='text-center text-md-start mt-4 pt-2'>
-            <MDBBtn className="mb-0 px-5" size='lg' onClick={handleLogin}
+            <MDBBtn className="mb-0 px-5" size='lg' onClick={loginAndGetUserList}
             >Đăng nhập</MDBBtn>
             <p className="small fw-bold mt-2 pt-1 mb-2">Don't have an account? <a href="/register" className="link-danger">Register</a></p>
           </div>
