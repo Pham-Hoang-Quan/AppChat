@@ -12,8 +12,39 @@ import {
   MDBNavbarNav,
   MDBInputGroup
 } from 'mdb-react-ui-kit';
-
+import {useHistory} from 'react-router-dom';
 export default function Header() {
+  const history = useHistory();
+  const [socket, setSocket] = useState(null);
+  useEffect(() => {
+    const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+
+    newSocket.addEventListener("open", (event) => {
+        console.log("Kết nối WebSocket đã được thiết lập", event);
+        setSocket(newSocket);
+    });
+
+    return () => {
+        // Đóng kết nối WebSocket khi component bị hủy
+        newSocket.close();
+    };
+}, []);
+  const handleLogout = () => {
+    //Gửi yêu cầu đăng ký đến server WebSocket
+    const requestData = {
+        action: "onchat",
+        data: {
+            event: "LOGOUT",
+        },
+    };
+    history.push("/login");
+};
+useEffect(() => {
+  
+  localStorage.removeItem('username');
+  localStorage.removeItem('password');
+  
+}, []);
   const [showNavNoTogglerSecond, setShowNavNoTogglerSecond] = useState(false);
 
   return (
@@ -50,7 +81,7 @@ export default function Header() {
             <MDBInputGroup tag="form" className='d-flex w-auto mb-3'>
               {/* <input className='form-control' placeholder="Type query" aria-label="Search" type='Search' /> */}
               {/* <MDBBtn outline>Đăng xuất</MDBBtn> */}
-              <MDBBtn color='info'>
+              <MDBBtn color='info' onClick={handleLogout}>
                 Đăng_Xuất
               </MDBBtn>
             </MDBInputGroup>
