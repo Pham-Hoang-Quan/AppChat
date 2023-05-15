@@ -62,6 +62,8 @@ const Login = () => {
     };
     socket.send(JSON.stringify(loginData));
     console.log("Đã gửi thông tin login cho server")
+
+    
     
       // Gửi yêu cầu lấy danh sách user tới WebSocket Server
       const userList = {
@@ -74,16 +76,23 @@ const Login = () => {
       console.log("Đã gửi yêu cầu lấy danh sách cho server")
       socket.onmessage = (event) => {
         const response = JSON.parse(event.data);
+        if (response && response.status === "success" &&  response.event === 'LOGIN') {
+          sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+          console.log("Đã lưu relogin_code vào session")
+        }
         if (response.status === 'success' && response.event === 'GET_USER_LIST') {
           const users = response.data;
           setUserList(users);
+          setIsLoginSuccess(true);
           console.log("đã lưu vào users")
           history.push('/', {userList : users})
           console.log("Đã chuyển sang trang '/'")
+          setError(response.mes)
           window.location.href = '/'
         }
       }
-    
+      
+
   }
 
   // Sau khi đăng nhập thành công, set socket và lưu trữ thông tin đăng nhập
@@ -99,7 +108,7 @@ const Login = () => {
         const responseData = JSON.parse(event.data);
         if (responseData && responseData.status === "success") {
           // Đăng nhập thành công
-          setIsLoginSuccess(true);
+          // setIsLoginSuccess(true);
           // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
           sessionStorage.setItem('relogin_code', responseData.data.RE_LOGIN_CODE);
         }
