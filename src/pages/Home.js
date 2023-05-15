@@ -9,118 +9,95 @@ import Header from "../componemts/Header";
 
 export default function Home() {
     const [socket, setSocket] = useState(null);
-    const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-
-    const [user, setUser] = useState("");
-    const [pass, setPass] = useState("");
-
+    const [selectedUser, setSelectedUser] = useState(null);
     const [userList, setUserList] = useState([]);
+    const [chatMess, setChatMess] = useState([]);
+
+    function handleUserClick(userName) {
+        setSelectedUser(userName);
+        console.log(userName);
+        if (selectedUser) {
+            const requestRelogin = {
+                action: "onchat",
+                data: {
+                    event: "RE_LOGIN",
+                    data: {
+                        user: sessionStorage.getItem('username'),
+                        code: sessionStorage.getItem('relogin_code')
+                    },
+                },
+            };
+            socket.send(JSON.stringify(requestRelogin));
+            // Tải tin nhắn của người dùng được chọn từ API hoặc database
+            // và cập nhật state `messages`.
+            console.log("Đã chọn được user")
+            const requestRoomChatMess = {
+                action: "onchat",
+                data: {
+                    event: "GET_ROOM_CHAT_MES",
+                    data: {
+                        name: userName,
+                        page: 1
+                    },
+                },
+            };
+            socket.send(JSON.stringify(requestRoomChatMess));
+            console.log("Đã gửi yêu cầu get room chat mes");
+        }
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'RE_LOGIN') {
+                console.log("Đã relogin thành công")
+            } else {
+                console.log(response.mes)
+            }
+            if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+                const chatMess = response.data.chatData;
+                setChatMess(chatMess);
+                console.log(chatMess);
+            } else {
+                console.log(response.mes)
+            }
+        }
+    }
+
+
 
     useEffect(() => {
-        const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+        // Khởi tạo kết nối với server qua websocket
+        const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-        newSocket.addEventListener("open", (event) => {
-            console.log("Kết nối WebSocket đã được thiết lập", event);
-            setSocket(newSocket);
+        socket.addEventListener("open", () => {
+            console.log("WebSocket connection established.");
 
+            // Gửi message RE_LOGIN để đăng nhập lại với thông tin user và code
+            socket.send(JSON.stringify({
+                action: "onchat",
+                data: {
+                    event: "RE_LOGIN",
+                    data: {
+                        user: sessionStorage.getItem('username'),
+                        code: sessionStorage.getItem('relogin_code')
+                    }
+                }
+            }
+            ));
+
+            setSocket(socket);
         });
-        
+
+        // Đóng kết nối khi component unmount
         return () => {
-            // Đóng kết nối WebSocket khi component bị hủy
-            newSocket.close();
+            socket.close();
         };
     }, []);
-
-
-    // const handleGetUserList = () => {
-    //     // Gửi yêu cầu lấy danh sách user tới WebSocket Server
-    //     const loginData = {
-    //         action: 'onchat',
-    //         data: {
-    //             event: 'LOGIN',
-    //             data: {
-    //                 user: sessionStorage.getItem('username'),
-    //                 pass: sessionStorage.getItem('password'),
-    //                 // user: user,
-    //                 // pass: pass,
-    //             },
-    //         },
-    //     };
-    //     socket.send(JSON.stringify(loginData));
-    //     console.log("Đã gửi thông tin login cho server")
-    //     const userList = {
-    //         action: 'onchat',
-    //         data: {
-    //             event: 'GET_USER_LIST',
-    //         },
-    //     };
-    //     socket.send(JSON.stringify(userList));
-    //     console.log("Đã gửi yêu cầu lấy danh sách cho server")
-    //     socket.onmessage = (event) => {
-    //         const response = JSON.parse(event.data);
-    //         if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-    //             const users = response.data;
-    //             setUserList(users);
-    //         }
-    //     }
-    //     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-
-    //     newSocket.addEventListener("open", (event) => {
-    //         console.log("Kết nối WebSocket đã được thiết lập", event);
-    //         setSocket(newSocket);
-    //     });
-    // }
-
-    // const loginAndGetUserList = () => {
-    //     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-
-    //     newSocket.addEventListener("open", (event) => {
-    //         console.log("Kết nối WebSocket đã được thiết lập", event);
-    //         setSocket(newSocket);
-    //     });
-    //     const loginData = {
-    //         action: 'onchat',
-    //         data: {
-    //             event: 'LOGIN',
-    //             data: {
-    //                 // user: sessionStorage.getItem('username'),
-    //                 // code: sessionStorage.getItem('password'),
-    //                 user: user,
-    //                 pass: pass,
-    //             },
-    //         },
-    //     };
-    //     socket.send(JSON.stringify(loginData));
-    //     console.log("Đã gửi thông tin login cho server")
-    //     const handleGetUserList = () => {
-    //         // Gửi yêu cầu lấy danh sách user tới WebSocket Server
-    //         const userList = {
-    //             action: 'onchat',
-    //             data: {
-    //                 event: 'GET_USER_LIST',
-    //             },
-    //         };
-    //         socket.send(JSON.stringify(userList));
-    //         console.log("Đã gửi yêu cầu lấy danh sách cho server")
-    //         socket.onmessage = (event) => {
-    //             const response = JSON.parse(event.data);
-    //             if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-    //                 const users = response.data;
-    //                 setUserList(users);
-    //             }
-    //         }
-    //     }
-    // }
-
-
-
 
 
     return (
         <><Header /><MDBContainer fluid className="py-5" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
-                <UserList userList={userList} />
-                <ChatBox />
+                <UserList userList={userList} handleUserClick={handleUserClick} />
+                <ChatBox selectedUser={selectedUser} chatMess = {chatMess} />
             </MDBRow>
         </MDBContainer></>
     );

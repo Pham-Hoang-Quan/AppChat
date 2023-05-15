@@ -20,7 +20,14 @@ export default function Header() {
     <>
       <MDBNavbar expand='lg' light bgColor='light'>
         <MDBContainer fluid>
-          <MDBNavbarBrand href='#'>App Chat</MDBNavbarBrand>
+          <MDBNavbarBrand href='#'>
+          <img
+              src='https://lh3.googleusercontent.com/74EILO4aC4i4b8fN-aEdgZQMe4xCrg0PWxIozicQZi6j7VxfALpWWa720TFr6DVy1FpOLJimsG-Pg_UwJxp5Rt0NnlxPAgHwacMuNV7g1C8Xj2VkrsWAsdQRFsd1BdoOXsFjJafEDGvWYRqXHX92CL2pnH9w6BCm3JRodDIFqEzCR9D0LD1O3dfBpPEfhulHMgQafnY0Y8KCX1aJraXJBndvXFpjYJfWFR1ya9YIpMV7e7JdbTybesxU4TYXlgC8zvfhetyZCkEpDxUY-pBTLFsxKmjpoOottqZJsJpHEkrm_fgbw183UhRd9W9lin_qU5kteZINHdOd-1a6hdeO9FUPyMv9f7qnJX_A3y_ZfrJ2HQR6RPGyd4J6DfChQG4jSTE1toX2mJa2ot5Y4ptUzJXXOcgXGdb9PJCbRlGzZyzaYmX7uno-IwuYQgvtXpCVcPr6imEgTJfg20TKfClW_Fa8pKAdu-gsbCbCQrXK-dRCaHru0W0xJWPXx_lXUMmw6mJXozF-6HwP_srr_Q1d-6fSbYtboNNwD9GDURilJ5pbKMCXlnQy-YQZ9JkfiTlZVnAEi5YncNuq-Jlzzdsximo8PmILtVWbBjQll6ZzI19ecI_pwMiiW0phbRNNT0U9grvAjUC81nZs663ugKWaXZJ7FoCVgoSy9k0usVxGd9zkY1KIRgRnI-VqdUTPR5_ogYOv9PDyLHjmlFXYkP15cnOX0yFu1whICjOOUlySThp5SJJ0UE3bytqSavFSpJ1_E9vaVijyqMW9LPKsdX9nggsr0_yEeIP4x_a92ycf-uOcBjn5FD8vLIgftLsweU4c7RbwGQ9PiSu5R8mGkp7XVjSJ9ptHVhlC9AOtqqOs9vpJkDSeHVblRKBZTeSCX1kPPB8erumRGfzc4JM3IgwWSdOEOZTX0e7mpaSe0GTB4IHCWKFQp8MY9MN8H81bxIT_M2_r04PHQC00bnjTIdUKBzww08eLDsRVSkfU0sN4XTHvTnaAhFrFrS61RjpX-ysrLxU4y6zoMyhJxxgDqDueCVVm=w500-h500-s-no?authuser=1'
+              height='40'
+              alt=''
+              loading='lazy'
+            />
+          </MDBNavbarBrand>
           <MDBNavbarToggler
             type='button'
             data-target='#navbarTogglerDemo02'
@@ -35,7 +42,7 @@ export default function Header() {
             <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
               <MDBNavbarItem>
                 <MDBNavbarLink active aria-current='page' href='#'>
-                  Home
+                  {sessionStorage.getItem('username')}
                 </MDBNavbarLink>
               </MDBNavbarItem>
               <MDBNavbarItem>
@@ -47,11 +54,11 @@ export default function Header() {
                 </MDBNavbarLink>
               </MDBNavbarItem>
             </MDBNavbarNav>
-            <MDBInputGroup tag="form" className='d-flex w-auto mb-3'>
+            <MDBInputGroup tag="form" className='d-flex w-auto'>
               {/* <input className='form-control' placeholder="Type query" aria-label="Search" type='Search' /> */}
               {/* <MDBBtn outline>Đăng xuất</MDBBtn> */}
               <MDBBtn color='info'>
-                Đăng_Xuất
+                Logout
               </MDBBtn>
             </MDBInputGroup>
           </MDBCollapse>

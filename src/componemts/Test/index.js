@@ -7,9 +7,7 @@ import {
     MDBCard,
     MDBCardBody,
     MDBCardImage,
-    MDBInput,
-    MDBIcon,
-    MDBCheckbox
+
 }
     from 'mdb-react-ui-kit';
 const Test = () => {
@@ -22,11 +20,12 @@ const Test = () => {
 
     const [error, setError] = useState('');
 
-
+    const [userList, setUserList] = useState([]);
 
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
 
+    const [currentName, setCurrentName] = useState("");
 
     // Khi component được tạo, thiết lập kết nối WebSocket
     useEffect(() => {
@@ -35,7 +34,7 @@ const Test = () => {
             console.log("Kết nối WebSocket đã được thiết lập", event);
             setSocket(newSocket);
         });
-
+        
         return () => {
             // Đóng kết nối WebSocket khi component bị hủy
             newSocket.close();
@@ -55,33 +54,51 @@ const Test = () => {
                     },
                 },
             };
-    
+
             socket.send(JSON.stringify(requestData));
             console.log("Đã gửi yêu cầu đăng nhập ở trang HOME")
         };
     }, []);
-
-    
-    const handleRegister = () => {
+    const handleLogin = () => {
         // Gửi yêu cầu đăng nhập đến server WebSocket
         const requestData = {
             action: "onchat",
             data: {
-                event: "GET_USER_LIST",
-                // data: {
-                //     name: name
-                // },
+                event: "LOGIN",
+                data: {
+                    // user: sessionStorage.getItem('username'),
+                    // pass: sessionStorage.getItem('password'),
+                    user: user,
+                    pass: pass
+                },
             },
         };
+
         socket.send(JSON.stringify(requestData));
+        console.log("Đã gửi yêu cầu đăng nhập ở trang HOME")
+        
+        const requestData1 = {
+            action: "onchat",
+            data: {
+                event: "GET_ROOM_CHAT_MES",
+                data: {
+                    name: "abcRoom",
+                    page: 1
 
-
-
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestData1));
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+                const users = response.data.chatData;
+                setUserList(users);
+                console.log(users);
+            }
+        }
 
     };
-
-    
-
 
 
     // Sau khi đăng nhập thành công, set socket và lưu trữ thông tin đăng nhập
@@ -99,9 +116,17 @@ const Test = () => {
     }, [socket]);
 
     return (
-
-        <><MDBContainer style={{ marginTop: '100px' }} fluid>
-
+        <><ul>
+            {Array.isArray(userList) ? (
+                userList.map((user, index) => (
+                    <li key={index}>
+                        {user.name}<br />
+                        {user.mes}<br />
+                    </li>
+                ))) : (
+                <li>no user</li>
+            )}
+        </ul><><MDBContainer style={{ marginTop: '100px' }} fluid>
             <MDBCard className='text-black m-5' style={{ borderRadius: '25px', marginTop: '50px' }}>
                 <MDBCardBody>
                     <MDBRow>
@@ -111,22 +136,22 @@ const Test = () => {
 
 
                             {/* <div className="d-flex flex-row align-items-center mb-4">
-                                <MDBIcon fas icon="envelope me-3" size='lg' />
-                                <MDBInput
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    label='Username' id='form2' type='email' />
-                            </div> */}
+        <MDBIcon fas icon="envelope me-3" size='lg' />
+        <MDBInput
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            label='Username' id='form2' type='email' />
+    </div> */}
 
                             {/* <div className="d-flex flex-row align-items-center mb-4">
-                                <MDBIcon fas icon="lock me-3" size='lg' />
+        <MDBIcon fas icon="lock me-3" size='lg' />
 
-                                <MDBInput
-                                    value={page}
-                                    onChange={(e) => setPage(e.target.value)}
-                                    label='Password' id='form3' type='password' />
-                            </div> */}
-                            <MDBBtn className='mb-4' size='lg' onClick={handleRegister}>Register</MDBBtn>
+        <MDBInput
+            value={page}
+            onChange={(e) => setPage(e.target.value)}
+            label='Password' id='form3' type='password' />
+    </div> */}
+                            <MDBBtn className='mb-4' size='lg' onClick={handleLogin}>Register</MDBBtn>
                             {error && <div className="alert alert-danger mt-3">{error}</div>}
 
                         </MDBCol>
@@ -140,19 +165,19 @@ const Test = () => {
             </MDBCard>
 
         </MDBContainer><div>
-                <input
-                    type="text"
-                    value={user}
-                    onChange={(e) => setUser(e.target.value)}
-                    placeholder="Nhập tên người dùng" />
-                <input
-                    type="password"
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
-                    placeholder="Nhập mật khẩu" />
-                {/* <button onClick={handleLogin}>Đăng nhập</button> */}
+                    <input
+                        type="text"
+                        value={user}
+                        onChange={(e) => setUser(e.target.value)}
+                        placeholder="Nhập tên người dùng" />
+                    <input
+                        type="password"
+                        value={pass}
+                        onChange={(e) => setPass(e.target.value)}
+                        placeholder="Nhập mật khẩu" />
+                    <button onClick={handleLogin}>Đăng nhập</button>
 
-            </div></>
+                </div></></>
     );
 };
 
