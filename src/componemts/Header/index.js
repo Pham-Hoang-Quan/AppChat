@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MDBNavbar,
   MDBContainer,
@@ -88,10 +88,8 @@ useEffect(() => {
             <MDBInputGroup tag="form" className='d-flex w-auto'>
               {/* <input className='form-control' placeholder="Type query" aria-label="Search" type='Search' /> */}
               {/* <MDBBtn outline>Đăng xuất</MDBBtn> */}
-
               <MDBBtn color='info' onClick={handleLogout}>
                 Đăng_Xuất
-
               </MDBBtn>
             </MDBInputGroup>
           </MDBCollapse>
