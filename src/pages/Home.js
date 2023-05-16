@@ -21,17 +21,17 @@ export default function Home() {
         console.log(userName);
         if (type == 1) {
             console.log("đã biết type = 1 và user là " + userName)
-            const requestRelogin = {
-                action: "onchat",
-                data: {
-                    event: "RE_LOGIN",
-                    data: {
-                        user: sessionStorage.getItem('username'),
-                        code: sessionStorage.getItem('relogin_code')
-                    },
-                },
-            };
-            socket.send(JSON.stringify(requestRelogin));
+            // const requestRelogin = {
+            //     action: "onchat",
+            //     data: {
+            //         event: "RE_LOGIN",
+            //         data: {
+            //             user: sessionStorage.getItem('username'),
+            //             code: sessionStorage.getItem('relogin_code')
+            //         },
+            //     },
+            // };
+            // socket.send(JSON.stringify(requestRelogin));
             // Tải tin nhắn của người dùng được chọn từ API hoặc database
             // và cập nhật state `messages`.
             // console.log("Đã chọn được user")
@@ -51,7 +51,7 @@ export default function Home() {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
                     console.log("Đã relogin thành công")
-                    
+                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
                 } else {
                     console.log(response.mes)
                 }
@@ -96,6 +96,12 @@ export default function Home() {
                 const response = JSON.parse(event.data);
                 if (response.status === 'error' && response.event === 'ACTION_NOT_EXIT') {
                     console.log(response.mes);
+                } else {
+                    console.log(response.mes)
+                }
+                if (response.status === 'success' && response.event === 'RE_LOGIN') {
+                    console.log("Đã relogin thành công")
+                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
                 } else {
                     console.log(response.mes)
                 }
@@ -153,15 +159,27 @@ export default function Home() {
                     }
                 }
             }
+
             ));
 
             setSocket(socket);
         });
 
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'RE_LOGIN') {
+                console.log("Đã relogin thành công")
+                sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+            } else {
+                console.log(response.mes)
+            }
+        }
+
         // Đóng kết nối khi component unmount
         return () => {
             socket.close();
         };
+        
     }, []);
 
 
