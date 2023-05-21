@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import {
-    MDBCol,
     MDBCard,
     MDBCardBody,
-    MDBIcon,
-    MDBTypography,
+    MDBCol,
+    MDBTypography
 } from "mdb-react-ui-kit";
-import CreateRoom from "../CreateRoom";
 import { useLocation } from 'react-router-dom';
+import CreateRoom from "../CreateRoom";
 
 
-export default function UserList({ handleUserClick }) {
+export default function UserList({ handleUserClick,userList }) {
 
-    const location = useLocation();
-    const userList = location.state?.userList || [];
 
+    useEffect(()=>{
+
+    },[userList])
 
 
     return (
@@ -29,10 +29,10 @@ export default function UserList({ handleUserClick }) {
 
                         {userList.map((user, index) => (
                             <div>
-                                <li key={index} className="p-2 border-bottom" onClick={() => handleUserClick(user.name, user.type)}>
+                                <li key={index} className="p-2 border-bottom" onClick={() => handleUserClick(user)}>
                                     <a href="#!" className="d-flex justify-content-between">
                                         <div className="d-flex flex-row">
-                                            {user.type == 0 ? (
+                                            {user.type === 0 ? (
                                                 <img
                                                     src="https://lh3.googleusercontent.com/wF4jH0JKRq49EFDanpyw06A0wjcxLt6t0GvDPF8jcFT52hzr1YSy0L-TfANx0YY99V2cXjgBYbVOLBqfDPM9Y1RPtf6Lv35K04yO6sRlXgjl5CQO1HONhlHsItyET2pNndxjXZx7UHrf5KULl0nJStyUM7MUgoaxRrmI65rt1ae8cPlWTgLshnwuIdQ5KDK05zwB3ozROV0YAc_0Q_Edi8q9RZlltummznf6GO-wznHWALCgxn2f9FRj0D64Oucg4apuqfpO6EEXMU4B2G6KS6BqKGV0MXD_rCVmIEtGU-zGjTdcv5OMJfQ_82lVZWm8_wxg3b71c6gBDRYeBYFdlREFbS3kl2g4pYrVs2ZbgW1NR7xvHDtecVKiOJYWJw2sA3WlwOwcZLlG5fRv4DZbvkhN2015Iu95SaJKeUNEiH3Lz3DZFf1o1Ie0i5S3aALzDwFFhajXw0MOFeUZfGlQ3kc_OSEgSJ7Vd3kgK8ZxmRbN1DNdWbrIQUpdxZG8t7E1sBJ9OQ9fccFw-hVqencXsO2tXwBp9u0KpgWhM_WtaO58OjKWDEDXCuTbbFOSqg8X5r7p9IRoO0O1JYDHbj2w3SNXlkYdJWkfUHfa6ynFiCc_b0E__a-gZWOFI0XG5xQ5W2NKhxjHuKwYhq_CvWHd5y8DQXpf19Wg2zGII_JKt1mcHzldMWhj03CCxiOcl6JhpvyOTMpLqp4ERSXH2pcVFhXMaGgdOmQ9mvmdzKlBCPYEnhXcT7v_BGPUm22n-sz-z5UCjZyUd0knY1s9EUz-siP-DJSm0wQ6y2FicLZXyHk7PUbssFd6tXrNRVNGthE-pm_t1hW1uVrIn5THhwg5FM-iH1e66HRtwnFaz1v1co3Gca_T3J-SBqd4sBrlT4Vd9nGI3_jWd1mBRrZoDT0IDK6FC-A33T4_9wdSBVZ6wGDNDK5UG1HreGe5X__ElZpNokHuCHda-Mg3INku-4d3-G8oBEkQIC7rhoH5N0yDbY-Ux_GHtAo0RQn_av-_XzA-9MRwzFTetg8oHpcM13CFAzdS=w295-h292-s-no?authuser=1"
                                                     alt="avatar"

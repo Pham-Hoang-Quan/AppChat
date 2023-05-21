@@ -1,38 +1,94 @@
-import React, { useState, useEffect } from "react";
 import {
-    MDBContainer,
-    MDBRow,
-    MDBCol,
     MDBCard,
     MDBCardBody,
-    MDBIcon,
-    MDBBtn,
-    MDBTypography,
-    MDBTextArea,
     MDBCardHeader,
+    MDBCol,
+    MDBIcon,
+    MDBTypography
 } from "mdb-react-ui-kit";
+import React, { useEffect, useState } from "react";
 import InputMess from "../InputMess";
 
 export default function ChatBox(props) {
 
-    const [selectedUser, setSelectedUser] = useState(null);
-    const { chatMess } = props;
+    const selectedUser = props.selectedUser
+    const { socket } = props;
+    const [chatMess, setChatMess] = useState([]);
+    const [isSentMessage, setIsSentMessage ] = useState(false);
 
     useEffect(() => {
         if (selectedUser) {
-            // Tải tin nhắn của người dùng được chọn từ API hoặc database
-            // và cập nhật state `messages`.
+            if (selectedUser.type === 0) {
+                getPeopleChat();
+            }
+            else {
+                getRoomChat();
+            }
         }
-    }, [selectedUser]);
+    }, [selectedUser, isSentMessage]);
+
+    const handleIsSent = () => {
+        setIsSentMessage(!isSentMessage)
+    }
 
 
+    const getPeopleChat = () => {
+        const requestPeopleChatMess = {
+            action: "onchat",
+            data: {
+                event: "GET_PEOPLE_CHAT_MES",
+                data: {
+                    name: selectedUser.name,
+                    page: 1
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestPeopleChatMess));
+        console.log("Đã gửi yêu cầu get people chat mes");
+
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
+                const chatMess = response.data;
+                setChatMess(chatMess);
+                console.log(chatMess);
+            } else {
+                console.log(response.mes)
+            }
+        }
+
+    }
+
+    const getRoomChat = () => {
+        const requestRoomChatMess = {
+            action: "onchat",
+            data: {
+                event: "GET_ROOM_CHAT_MES",
+                data: {
+                    name: selectedUser.name,
+                    page: 1
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestRoomChatMess));
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+                const chatMess = response.data;
+                setChatMess(chatMess.chatData);
+                console.log(chatMess);
+            } else {
+                console.log(response.mes)
+            }
+        }
+    }
 
     return (
         <MDBCol md="6" lg="7" xl="8">
             <MDBTypography style={{ height: "500px", overflow: "scroll" }} listUnStyled>
                 {chatMess.map((mess, index) => (
                     <div key={index}>
-                        {mess.name == sessionStorage.getItem('username') ? (
+                        {mess.name === sessionStorage.getItem('username') ? (
                             <li style={{ width: "600px", textAlign: "right", marginLeft: "365px", }} class="d-flex mb-4 ml-300">
                                 <MDBCard className="w-100">
                                     <MDBCardHeader className="d-flex justify-content-between p-3">
@@ -83,7 +139,7 @@ export default function ChatBox(props) {
                     </div>
                 ))}
             </MDBTypography>
-            <InputMess />
+            <InputMess socket={socket} selectedUser={selectedUser} handleIsSent={handleIsSent} />
         </MDBCol>
     );
 }

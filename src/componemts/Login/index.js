@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {useHistory} from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import { MDBContainer, MDBCol, MDBRow, MDBBtn, MDBIcon, MDBInput, MDBCheckbox } from 'mdb-react-ui-kit';
+import { MDBBtn, MDBCheckbox, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow } from 'mdb-react-ui-kit';
+import React, { useEffect, useState } from "react";
 
 
 const Login = () => {
+  const [socket, setSocket] = useState();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [socket, setSocket] = useState(null);
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-  const [connected, setConnected] = useState(false);
-  // const history = useHistory();
-  const [userList, setUserList] = useState([]);
   const history = createBrowserHistory();
 
-
-  // Khi component được tạo, thiết lập kết nối WebSocket
   useEffect(() => {
     const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
@@ -28,12 +22,10 @@ const Login = () => {
     return () => {
       // Đóng kết nối WebSocket khi component bị hủy
       newSocket.close();
+      console.log("Da dong socket")
     };
   }, []);
-
-  const register = () => {
-    window.location.href = '/register';
-  }
+  // Khi component được tạo, thiết lập kết nối WebSocket
 
   const loginAndGetUserList = () => {
     // Kiểm tra nếu chưa nhập tên đăng nhập hoặc mật khẩu thì hiển thị thông báo lỗi
@@ -63,35 +55,21 @@ const Login = () => {
     socket.send(JSON.stringify(loginData));
     console.log("Đã gửi thông tin login cho server")
 
-    
-    
-      // Gửi yêu cầu lấy danh sách user tới WebSocket Server
-      const userList = {
-        action: 'onchat',
-        data: {
-          event: 'GET_USER_LIST',
-        },
-      };
-      socket.send(JSON.stringify(userList));
-      console.log("Đã gửi yêu cầu lấy danh sách cho server")
-      socket.onmessage = (event) => {
-        const response = JSON.parse(event.data);
-        if (response && response.status === "success" &&  response.event === 'LOGIN') {
-          sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
-          console.log("Đã lưu relogin_code vào session")
-        }
-        if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-          const users = response.data;
-          setUserList(users);
-          setIsLoginSuccess(true);
-          console.log("đã lưu vào users")
-          history.push('/', {userList : users})
-          console.log("Đã chuyển sang trang '/'")
-          setError(response.mes)
-          window.location.href = '/'
-        }
+    // Gửi yêu cầu lấy danh sách user tới WebSocket Server
+    socket.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      if (response && response.status === "success" && response.event === 'LOGIN') {
+        sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+        setIsLoginSuccess(true);
+        console.log("đã lưu vào users")
+        history.push('/')
+        console.log("Đã chuyển sang trang '/'")
+        setError(response.mes)
+        window.location.href = '/'
+        console.log("Đã lưu relogin_code vào session")
       }
-      
+    }
+
 
   }
 
