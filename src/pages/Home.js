@@ -1,18 +1,64 @@
 import React, { useState, useEffect } from "react";
 import {
     MDBContainer,
-    MDBRow
+    MDBRow,
+    MDBCol
 } from "mdb-react-ui-kit";
 import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
+import InputMess from "../componemts/InputMess";
 
 export default function Home() {
     const [socket, setSocket] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedUserType, setSelectedUserType] = useState(null);
+    const [typeSend, setTypeSend] = useState(null);
     const [userList, setUserList] = useState([]);
     const [chatMess, setChatMess] = useState([]);
+
+
+
+    function handleSendMessage(message) {
+        const chatData = {
+            action: 'onchat',
+            data: {
+                event: 'SEND_CHAT',
+                data: {
+                    type: typeSend, // Loại tin nhắn (data.chatData.type)
+                    to: selectedUser, // get room chat mess (data.chatData.name)
+                    mes: message, // Nội dung tin nhắn từ người dùng nhập vào
+                }
+            },
+        };
+        socket.send(JSON.stringify(chatData));
+        console.log("Đã gửi tin nhắn lên cho server");
+        if (selectedUserType == 1) {
+            const requestRoomChatMessage = {
+                action: "onchat",
+                data: {
+                    event: "GET_ROOM_CHAT_MES",
+                    data: {
+                        name: selectedUser,
+                        page: 1,
+                    },
+                },
+            };
+            socket.send(JSON.stringify(requestRoomChatMessage));
+        } else {
+            const requestRoomChatMessage = {
+                action: "onchat",
+                data: {
+                    event: "GET_PEOPLE_CHAT_MES",
+                    data: {
+                        name: selectedUser,
+                        page: 1,
+                    },
+                },
+            };
+            socket.send(JSON.stringify(requestRoomChatMessage));
+        }
+    }
 
     function handleUserClick(userName, type) {
         setSelectedUser(userName);
@@ -20,21 +66,8 @@ export default function Home() {
         console.log(type)
         console.log(userName);
         if (type == 1) {
+            setTypeSend("room");
             console.log("đã biết type = 1 và user là " + userName)
-            // const requestRelogin = {
-            //     action: "onchat",
-            //     data: {
-            //         event: "RE_LOGIN",
-            //         data: {
-            //             user: sessionStorage.getItem('username'),
-            //             code: sessionStorage.getItem('relogin_code')
-            //         },
-            //     },
-            // };
-            // socket.send(JSON.stringify(requestRelogin));
-            // Tải tin nhắn của người dùng được chọn từ API hoặc database
-            // và cập nhật state `messages`.
-            // console.log("Đã chọn được user")
             const requestRoomChatMess = {
                 action: "onchat",
                 data: {
@@ -47,38 +80,20 @@ export default function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMess));
             console.log("Đã gửi yêu cầu get room chat mes");
-            socket.onmessage = (event) => {
-                const response = JSON.parse(event.data);
-                if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã relogin thành công")
-                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
-                } else {
-                    console.log(response.mes)
-                }
-                if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatMess = response.data.chatData;
-                    setChatMess(chatMess);
-                    console.log(chatMess);
-                } else {
-                    console.log(response.mes)
-                }
-            }
         } else {
+            setTypeSend("people");
             console.log("đã biết type = 1 và user là " + userName)
-            // const requestRelogin = {
-            //     action: "onchat",
-            //     data: {
-            //         event: "RE_LOGIN",
-            //         data: {
-            //             user: sessionStorage.getItem('username'),
-            //             code: sessionStorage.getItem('relogin_code')
-            //         },
-            //     },
-            // };
-            // socket.send(JSON.stringify(requestRelogin));
-            // Tải tin nhắn của người dùng được chọn từ API hoặc database
-            // và cập nhật state `messages`.
-            // console.log("Đã chọn được user")
+            const requestRelogin = {
+                action: "onchat",
+                data: {
+                    event: "RE_LOGIN",
+                    data: {
+                        user: sessionStorage.getItem('user'),
+                        code: sessionStorage.getItem('relogin_code')
+                    },
+                },
+            };
+            socket.send(JSON.stringify(requestRelogin));
             const requestRoomChatMess = {
                 action: "onchat",
                 data: {
@@ -91,52 +106,7 @@ export default function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMess));
             console.log("Đã gửi yêu cầu get people chat mes");
-
-            socket.onmessage = (event) => {
-                const response = JSON.parse(event.data);
-                if (response.status === 'error' && response.event === 'ACTION_NOT_EXIT') {
-                    console.log(response.mes);
-                } else {
-                    console.log(response.mes)
-                }
-                if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã relogin thành công")
-                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
-                } else {
-                    console.log(response.mes)
-                }
-                if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
-                    const chatMess = response.data;
-                    setChatMess(chatMess);
-                    console.log(chatMess);
-                } else {
-                    console.log(response.mes)
-                }
-
-            }
         }
-        // socket.onmessage = (event) => {
-        //     const response = JSON.parse(event.data);
-        //     if (response.status === 'success' && response.event === 'RE_LOGIN') {
-        //         console.log("Đã relogin thành công")
-        //     } else {
-        //         console.log(response.mes)
-        //     }
-        //     if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-        //         const chatMess = response.data.chatData;
-        //         setChatMess(chatMess);
-        //         console.log(chatMess);
-        //     } else {
-        //         console.log(response.mes)
-        //     }
-        //     if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
-        //         const chatMess = response.data.chatData;
-        //         setChatMess(chatMess);
-        //         console.log(chatMess);
-        //     } else {
-        //         console.log(response.mes)
-        //     }
-        // }
     }
 
 
@@ -144,10 +114,8 @@ export default function Home() {
     useEffect(() => {
         // Khởi tạo kết nối với server qua websocket
         const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-
         socket.addEventListener("open", () => {
             console.log("WebSocket connection established.");
-
             // Gửi message RE_LOGIN để đăng nhập lại với thông tin user và code
             socket.send(JSON.stringify({
                 action: "onchat",
@@ -159,35 +127,48 @@ export default function Home() {
                     }
                 }
             }
-
             ));
-
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                if (response.status === 'success' && response.event === 'RE_LOGIN') {
+                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE)
+                }
+                if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+                    const chatMess = response.data;
+                    setChatMess(chatMess);
+                    console.log(chatMess);
+                }
+                if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
+                    const chatMess = response.data;
+                    setChatMess(chatMess);
+                    console.log(chatMess)
+                }
+                if (response.status === 'success' && response.event === 'SEND_CHAT') {
+                    const receivedMessage = response.data;
+                    setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
+                }
+            }
+            
             setSocket(socket);
         });
-
-        socket.onmessage = (event) => {
-            const response = JSON.parse(event.data);
-            if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                console.log("Đã relogin thành công")
-                sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
-            } else {
-                console.log(response.mes)
-            }
-        }
-
         // Đóng kết nối khi component unmount
         return () => {
             socket.close();
         };
-        
     }, []);
 
 
+
+
+
     return (
-        <><Header /><MDBContainer fluid className="py-5" style={{ backgroundColor: "#eee" }}>
+        <><Header /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
                 <UserList userList={userList} handleUserClick={handleUserClick} />
-                <ChatBox selectedUser={selectedUser} chatMess={chatMess} />
+                <MDBCol md="6" lg="7" xl="8">
+                    <ChatBox chatMess={chatMess} />
+                    <InputMess handleSendMessage={handleSendMessage} />
+                </MDBCol>
             </MDBRow>
         </MDBContainer></>
     );
