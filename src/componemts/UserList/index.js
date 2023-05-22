@@ -25,12 +25,12 @@ export default function UserList({ handleUserClick }) {
                     <div className="p-2 border-bottom">
                         <CreateRoom />
                     </div>
-                    <MDBTypography style={{ height: "500px", overflow: "scroll" }} listUnStyled className="mb-0">
+                    <MDBTypography style={{ height: "560px", overflow: "scroll" }} listUnStyled className="mb-0">
 
                         {userList.map((user, index) => (
                             <div>
                                 <li key={index} className="p-2 border-bottom" onClick={() => handleUserClick(user.name, user.type)}>
-                                    <a href="#!" className="d-flex justify-content-between">
+                                    <a  className="d-flex justify-content-between">
                                         <div className="d-flex flex-row">
                                             {user.type == 0 ? (
                                                 <img

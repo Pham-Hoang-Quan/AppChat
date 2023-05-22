@@ -72,16 +72,16 @@ useEffect(() => {
           <MDBCollapse navbar show={showNavNoTogglerSecond}>
             <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
               <MDBNavbarItem>
-                <MDBNavbarLink active aria-current='page' href='#'>
-                  {sessionStorage.getItem('username')}
+                <MDBNavbarLink active aria-current='page'>
+                  APPCHAT
                 </MDBNavbarLink>
               </MDBNavbarItem>
               <MDBNavbarItem>
-                <MDBNavbarLink href='#'>Link</MDBNavbarLink>
+                <MDBNavbarLink>{sessionStorage.getItem('username')}</MDBNavbarLink>
               </MDBNavbarItem>
               <MDBNavbarItem>
                 <MDBNavbarLink disabled href='#' tabIndex={-1} aria-disabled='true'>
-                  Disabled
+                  ChatGPT
                 </MDBNavbarLink>
               </MDBNavbarItem>
             </MDBNavbarNav>
