@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { useHistory } from 'react-router-dom';
+
+
 import {
     MDBContainer,
     MDBRow,
-    MDBCol
+    MDBCol,
+    MDBCardBody
 } from "mdb-react-ui-kit";
 import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
 import InputMess from "../componemts/InputMess";
+import CreateRoom from "../componemts/CreateRoom";
+
 
 export default function Home() {
     const [socket, setSocket] = useState(null);
@@ -16,6 +24,10 @@ export default function Home() {
     const [typeSend, setTypeSend] = useState(null);
     const [userList, setUserList] = useState([]);
     const [chatMess, setChatMess] = useState([]);
+    const [error, setError] = useState([]);
+
+    const history = createBrowserHistory();
+
 
 
 
@@ -109,7 +121,46 @@ export default function Home() {
         }
     }
 
+    function handleCreateRoom(roomName) {
+        const requestcreateRoom = {
+            action: "onchat",
+            data: {
+                event: "CREATE_ROOM",
+                data: {
+                    name: roomName,
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestcreateRoom));
+        console.log("Đã gửi yêu cầu ");
+        const userList = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(userList));
+        //   setRoomName('');
+        // socket.onmessage = (event) => {
+        //     const response = JSON.parse(event.data);
+        //     if (response.status === 'success' && response.event === 'CREATE_ROOM') {
+        //         const newRoom = response.data.roomName;
+        //         setUserList([...userList, newRoom]);
+        //     } else {
+        //         console.log(response.mes)
+        //     }
 
+        //     if (response.status === 'success' && response.event === 'RE_LOGIN') {
+        //         console.log("Đã relogin thành công")
+        //         sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+        //     } else {
+        //         console.log(response.mes)
+        //     }
+
+
+        // }
+
+    }
 
     useEffect(() => {
         // Khởi tạo kết nối với server qua websocket
@@ -127,7 +178,16 @@ export default function Home() {
                     }
                 }
             }
-            ));
+            ))
+                ;
+            socket.send(JSON.stringify({
+                action: 'onchat',
+                data: {
+                    event: 'GET_USER_LIST',
+                },
+            }
+            ))
+                ;
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
@@ -147,8 +207,18 @@ export default function Home() {
                     const receivedMessage = response.data;
                     setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
                 }
+                if (response.status === 'success' && response.event === 'CREATE_ROOM') {
+                    const receivedRoomName = response.data;
+                }
+                if (response.status === 'error' && response.event === 'CREATE_ROOM') {
+                    alert(response.mes)
+                }
+                if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+                    const users = response.data;
+                    setUserList(users);
+                }
             }
-            
+
             setSocket(socket);
         });
         // Đóng kết nối khi component unmount
@@ -162,9 +232,16 @@ export default function Home() {
 
 
     return (
-        <><Header /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+        <><Header error={error} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+
             <MDBRow>
-                <UserList userList={userList} handleUserClick={handleUserClick} />
+                <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                    <MDBCardBody>
+                        <CreateRoom handleCreateRoom={handleCreateRoom} />
+                    </MDBCardBody>
+
+                    <UserList userList={userList} handleUserClick={handleUserClick} />
+                </MDBCol>
                 <MDBCol md="6" lg="7" xl="8">
                     <ChatBox chatMess={chatMess} />
                     <InputMess handleSendMessage={handleSendMessage} />

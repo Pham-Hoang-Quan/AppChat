@@ -85,7 +85,7 @@ const Login = () => {
           setUserList(users);
           setIsLoginSuccess(true);
           console.log("đã lưu vào users")
-          history.push('/', {userList : users})
+          history.push('/', {userList : users},{setUserList : setUserList})
           console.log("Đã chuyển sang trang '/'")
           setError(response.mes)
           window.location.href = '/'

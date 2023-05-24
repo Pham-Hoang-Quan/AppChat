@@ -11,20 +11,21 @@ import CreateRoom from "../CreateRoom";
 import { useLocation } from 'react-router-dom';
 
 
-export default function UserList({ handleUserClick }) {
+export default function UserList( {userList, handleUserClick }) {
 
     const location = useLocation();
-    const userList = location.state?.userList || [];
+    // const userList = location.state?.userList || [];
+    
+    // const { userList } = props;
 
-
-
+    // const { userList } = props;
     return (
-        <MDBCol  md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+        // <MDBCol  md="6" lg="5" xl="4" className="mb-4 mb-md-0">
             <MDBCard>
                 <MDBCardBody>
-                    <div className="p-2 border-bottom">
+                    {/* <div className="p-2 border-bottom">
                         <CreateRoom />
-                    </div>
+                    </div> */}
                     <MDBTypography style={{ height: "560px", overflow: "scroll" }} listUnStyled className="mb-0">
 
                         {userList.map((user, index) => (
@@ -65,6 +66,6 @@ export default function UserList({ handleUserClick }) {
                     </MDBTypography>
                 </MDBCardBody>
             </MDBCard>
-        </MDBCol>
+        // </MDBCol>
     );
 }
