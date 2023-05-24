@@ -83,17 +83,17 @@ export default function Home() {
         } else {
             setTypeSend("people");
             console.log("đã biết type = 1 và user là " + userName)
-            const requestRelogin = {
-                action: "onchat",
-                data: {
-                    event: "RE_LOGIN",
-                    data: {
-                        user: sessionStorage.getItem('user'),
-                        code: sessionStorage.getItem('relogin_code')
-                    },
-                },
-            };
-            socket.send(JSON.stringify(requestRelogin));
+            // const requestRelogin = {
+            //     action: "onchat",
+            //     data: {
+            //         event: "RE_LOGIN",
+            //         data: {
+            //             user: sessionStorage.getItem('user'),
+            //             code: sessionStorage.getItem('relogin_code')
+            //         },
+            //     },
+            // };
+            // socket.send(JSON.stringify(requestRelogin));
             const requestRoomChatMess = {
                 action: "onchat",
                 data: {
@@ -134,7 +134,7 @@ export default function Home() {
                     sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE)
                 }
                 if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatMess = response.data;
+                    const chatMess = response.data.chatData;
                     setChatMess(chatMess);
                     console.log(chatMess);
                 }
