@@ -41,7 +41,8 @@ function handleClick() {
         onKeyPress={keyClickEnter}/>
       </MDBCol>
       <MDBCol size='auto'>
-        <MDBCheckbox id='form13Example2' label='Room' />
+        {/* <MDBCheckbox id='form13Example2' label='Room' /> */}
+        <MDBBtn onClick={handleClick}><MDBIcon size='lg' fas icon="circle-plus" /></MDBBtn>
       </MDBCol>
       <MDBCol size='auto'>
         <MDBBtn onClick={handleClick}><MDBIcon size='lg' fas icon="arrow-circle-right" /></MDBBtn>

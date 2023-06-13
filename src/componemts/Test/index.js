@@ -55,10 +55,31 @@ const Test = () => {
                 },
             };
 
-            socket.send(JSON.stringify(requestData));
+            // socket.send(JSON.stringify(requestData));
             console.log("Đã gửi yêu cầu đăng nhập ở trang HOME")
         };
     }, []);
+    const handleJoin = () => {
+        const requestcreateRoom = {
+            action: "onchat",
+            data: {
+                event: "JOIN_ROOM",
+                data: {
+                    name: 'vbhjrfbvnjaef',
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestcreateRoom));
+    }
+    const handleLogout = () => {
+        const requestcreateRoom = {
+            action: "onchat",
+            data: {
+                event: "LOGOUT",
+            },
+        };
+        socket.send(JSON.stringify(requestcreateRoom));
+    }
     const handleLogin = () => {
         // Gửi yêu cầu đăng nhập đến server WebSocket
         const requestData = {
@@ -77,18 +98,7 @@ const Test = () => {
         socket.send(JSON.stringify(requestData));
         console.log("Đã gửi yêu cầu đăng nhập ở trang HOME")
         
-        const requestData1 = {
-            action: "onchat",
-            data: {
-                event: "GET_ROOM_CHAT_MES",
-                data: {
-                    name: "abcRoom",
-                    page: 1
-
-                },
-            },
-        };
-        socket.send(JSON.stringify(requestData1));
+        
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
             if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
@@ -151,8 +161,9 @@ const Test = () => {
             onChange={(e) => setPage(e.target.value)}
             label='Password' id='form3' type='password' />
     </div> */}
-                            <MDBBtn className='mb-4' size='lg' onClick={handleLogin}>Register</MDBBtn>
+                            <MDBBtn className='mb-4' size='lg' onClick={handleJoin}>Join</MDBBtn>
                             {error && <div className="alert alert-danger mt-3">{error}</div>}
+                            <MDBBtn className='mb-4' size='lg' onClick={handleLogout}>logout</MDBBtn>
 
                         </MDBCol>
 

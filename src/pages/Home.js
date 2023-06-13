@@ -120,7 +120,19 @@ export default function Home() {
             console.log("Đã gửi yêu cầu get people chat mes");
         }
     }
-
+    function handleLogout() {
+        const requestLogout = {
+            action: "onchat",
+            data: {
+                event: "LOGOUT",
+            },
+        };
+        socket.send(JSON.stringify(requestLogout));
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('password');
+        sessionStorage.removeItem('relogin_code');
+        
+    }
     function handleCreateRoom(roomName) {
         const requestcreateRoom = {
             action: "onchat",
@@ -132,6 +144,7 @@ export default function Home() {
             },
         };
         socket.send(JSON.stringify(requestcreateRoom));
+        setSelectedUser(roomName);
         console.log("Đã gửi yêu cầu ");
         const userList = {
             action: 'onchat',
@@ -232,7 +245,7 @@ export default function Home() {
 
 
     return (
-        <><Header error={error} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+        <><Header handleLogout = {handleLogout} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
 
             <MDBRow>
                 <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
@@ -240,7 +253,7 @@ export default function Home() {
                         <CreateRoom handleCreateRoom={handleCreateRoom} />
                     </MDBCardBody>
 
-                    <UserList userList={userList} handleUserClick={handleUserClick} />
+                    <UserList selectedUser = {selectedUser} userList={userList} handleUserClick={handleUserClick} />
                 </MDBCol>
                 <MDBCol md="6" lg="7" xl="8">
                     <ChatBox chatMess={chatMess} />
