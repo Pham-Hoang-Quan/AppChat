@@ -11,17 +11,22 @@ import {
   MDBTextArea,
   MDBCardHeader,
 } from "mdb-react-ui-kit";
-
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 export default function InputMess({ handleSendMessage }) {
 
   const [selectedUser, setSelectedUser] = useState(null);
 
 
   const [message, setMessage] = useState("");
+  
+  const [showPicker, setShowPicker] = useState(false);
+ 
+  
 
-  function handleChange(event) {
+  function handleChange(e) {
 
-    setMessage(event.target.value); // Cập nhật giá trị từ thẻ input vào state
+    setMessage(e.target.value); // Cập nhật giá trị từ thẻ input vào state
 
   }
   function keyClickEnter(e) {
@@ -53,12 +58,20 @@ export default function InputMess({ handleSendMessage }) {
         value={message} // Gán giá trị từ state vào giá trị của thẻ input
         onChange={handleChange} // Gắn sự kiện onChange để cập nhật state khi nhập liệu vào thẻ input
         onKeyPress={keyClickEnter}
+        
       />
       <a className="ms-1 text-muted" href="#!">
         <MDBIcon fas icon="paperclip" />
       </a>
       <a className="ms-3 text-muted" href="#!">
-        <MDBIcon fas icon="smile" />
+        <MDBIcon fas icon="smile"  onClick={() => setShowPicker(!showPicker)} />
+        {showPicker && <Picker
+          data={data} 
+          
+          onEmojiSelect={(e)=>{setMessage(e.native);
+            setShowPicker(!showPicker)
+          }}
+           />}
       </a>
       <a className="ms-3" onClick={handleClick}>
         <MDBIcon fas icon="paper-plane" />
