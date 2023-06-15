@@ -9,7 +9,12 @@ import {
     MDBRow,
     MDBCol,
     MDBCardBody
-} from "mdb-react-ui-kit";
+}
+
+
+
+
+from "mdb-react-ui-kit";
 import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
@@ -32,6 +37,7 @@ export default function Home() {
 
 
     function handleSendMessage(message) {
+        const encodedMessage = encodeURIComponent(message);
         const chatData = {
             action: 'onchat',
             data: {
@@ -39,7 +45,7 @@ export default function Home() {
                 data: {
                     type: typeSend, // Loại tin nhắn (data.chatData.type)
                     to: selectedUser, // get room chat mess (data.chatData.name)
-                    mes: message, // Nội dung tin nhắn từ người dùng nhập vào
+                    mes: encodedMessage, // Nội dung tin nhắn từ người dùng nhập vào
                 }
             },
         };
@@ -71,6 +77,7 @@ export default function Home() {
             socket.send(JSON.stringify(requestRoomChatMessage));
         }
     }
+
 
     function handleUserClick(userName, type) {
         setSelectedUser(userName);
