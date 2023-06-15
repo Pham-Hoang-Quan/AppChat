@@ -52,7 +52,7 @@ export default function ChatBox(props) {
                                 </MDBCardHeader>
                                 <MDBCardBody className="btn-info ">
                                     <p className="mb-0">
-                                        {mess.mes}
+                                        {decodeURIComponent(mess.mes)}
                                     </p>
                                 </MDBCardBody>
 
@@ -79,7 +79,7 @@ export default function ChatBox(props) {
                                 </MDBCardHeader>
                                 <MDBCardBody style={{ width: "600px" }}>
                                     <p className="mb-0 w-100">
-                                        {mess.mes}
+                                        {decodeURIComponent(mess.mes)}
                                     </p>
                                 </MDBCardBody>
                             </MDBCard>
