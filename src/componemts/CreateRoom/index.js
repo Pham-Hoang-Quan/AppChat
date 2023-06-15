@@ -7,7 +7,7 @@ import {
   MDBBtn,
   MDBIcon
 } from 'mdb-react-ui-kit';
-export default function CreateRoom({handleCreateRoom}) {
+export default function CreateRoom({handleCreateRoom, handleJoinRoom}) {
   const [roomName, setRoomName] = useState('');
   const [selectedUserType, setSelectedUserType] = useState(null);
   const [userList, setUserList] = useState([ ...roomName]);
@@ -21,12 +21,20 @@ function handleChange(event) {
 }
 function keyClickEnter(e) {
   if (e.key === 'Enter') {
-    handleClick();
+    handleClickCreate();
+    handleClickJoin() ;
   }
 }
-function handleClick() {
+function handleClickCreate() {
   if (roomName !== "") {
     handleCreateRoom(roomName); // Truyền giá trị message vào hàm handleSendMessage
+    setRoomName('');
+  }
+
+}
+function handleClickJoin() {
+  if (roomName !== "") {
+    handleJoinRoom(roomName); // Truyền giá trị message vào hàm handleSendMessage
     setRoomName('');
   }
 
@@ -42,10 +50,10 @@ function handleClick() {
       </MDBCol>
       <MDBCol size='auto'>
         {/* <MDBCheckbox id='form13Example2' label='Room' /> */}
-        <MDBBtn onClick={handleClick}><MDBIcon size='lg' fas icon="circle-plus" /></MDBBtn>
+        <MDBBtn onClick={handleClickCreate}><MDBIcon size='lg' fas icon="circle-plus" /></MDBBtn>
       </MDBCol>
       <MDBCol size='auto'>
-        <MDBBtn onClick={handleClick}><MDBIcon size='lg' fas icon="arrow-circle-right" /></MDBBtn>
+        <MDBBtn onClick={handleClickJoin}><MDBIcon size='lg' fas icon="arrow-circle-right" /></MDBBtn>
       </MDBCol>
     </MDBRow>
   );

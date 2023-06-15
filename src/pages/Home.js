@@ -22,6 +22,7 @@ import InputMess from "../componemts/InputMess";
 import CreateRoom from "../componemts/CreateRoom";
 
 
+
 export default function Home() {
     const [socket, setSocket] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -33,7 +34,7 @@ export default function Home() {
 
     const history = createBrowserHistory();
 
-
+   
 
 
     function handleSendMessage(message) {
@@ -181,6 +182,29 @@ export default function Home() {
         // }
 
     }
+    function handleJoinRoom(roomName) {
+        const requestJoinRoom = {
+            action: "onchat",
+            data: {
+                event: "JOIN_ROOM",
+                data: {
+                    name: roomName,
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestJoinRoom));
+        setSelectedUser(roomName);
+        console.log("Đã gửi yêu cầu ");
+        const userList = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(userList));
+        
+
+    }
 
     useEffect(() => {
         // Khởi tạo kết nối với server qua websocket
@@ -233,6 +257,12 @@ export default function Home() {
                 if (response.status === 'error' && response.event === 'CREATE_ROOM') {
                     alert(response.mes)
                 }
+                if (response.status === 'success' && response.event === 'JOIN_ROOM') {
+                    const receivedJoinRoomName = response.data;
+                }
+                if (response.status === 'error' && response.event === 'JOIN_ROOM') {
+                    alert(response.mes)
+                }
                 if (response.status === 'success' && response.event === 'GET_USER_LIST') {
                     const users = response.data;
                     setUserList(users);
@@ -245,6 +275,7 @@ export default function Home() {
         return () => {
             socket.close();
         };
+    
     }, []);
 
 
@@ -257,7 +288,7 @@ export default function Home() {
             <MDBRow>
                 <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
                     <MDBCardBody>
-                        <CreateRoom handleCreateRoom={handleCreateRoom} />
+                        <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
                     </MDBCardBody>
 
                     <UserList selectedUser = {selectedUser} userList={userList} handleUserClick={handleUserClick} />
