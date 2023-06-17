@@ -71,6 +71,19 @@ const Test = () => {
         };
         socket.send(JSON.stringify(requestcreateRoom));
     }
+    const handlecheck = () => {
+        const requestcreateRoom = {
+            action: "onchat",
+            data: {
+                event: "CHECK_USER",
+                data: {
+                    //name: sessionStorage.getItem('username'),
+                    user: "20130357"
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestcreateRoom));
+    }
     const handleLogout = () => {
         const requestcreateRoom = {
             action: "onchat",
@@ -164,6 +177,7 @@ const Test = () => {
                             <MDBBtn className='mb-4' size='lg' onClick={handleJoin}>Join</MDBBtn>
                             {error && <div className="alert alert-danger mt-3">{error}</div>}
                             <MDBBtn className='mb-4' size='lg' onClick={handleLogout}>logout</MDBBtn>
+                            <MDBBtn className='mb-4' size='lg' onClick={handlecheck}>Check</MDBBtn>
 
                         </MDBCol>
 
