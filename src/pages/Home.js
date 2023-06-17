@@ -32,7 +32,10 @@ export default function Home() {
     const [chatMess, setChatMess] = useState([]);
     const [error, setError] = useState([]);
 
-    const history = createBrowserHistory();
+    const [members, setMembers] = useState([]);
+    const [owner, setOwner] = useState(null);
+
+    
 
    
 
@@ -241,6 +244,14 @@ export default function Home() {
                     const chatMess = response.data.chatData;
                     setChatMess(chatMess);
                     console.log(chatMess);
+
+                    const members = response.data.userList;
+                    setMembers(members);
+                    console.log(members);
+                    
+                    const own = response.data.own;
+                    setOwner(own);
+                    console.log(owner);
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
                     const chatMess = response.data;
@@ -252,7 +263,8 @@ export default function Home() {
                     setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
                 }
                 if (response.status === 'success' && response.event === 'CREATE_ROOM') {
-                    const receivedRoomName = response.data;
+                    const chatMess = response.data.chatData;
+                    setChatMess(chatMess);
                 }
                 if (response.status === 'error' && response.event === 'CREATE_ROOM') {
                     alert(response.mes)
