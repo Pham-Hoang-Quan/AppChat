@@ -65,7 +65,7 @@ const Test = () => {
             data: {
                 event: "JOIN_ROOM",
                 data: {
-                    name: 'vbhjrfbvnjaef',
+                    name: 'fox',
                 },
             },
         };
@@ -77,7 +77,6 @@ const Test = () => {
             data: {
                 event: "CHECK_USER",
                 data: {
-                    //name: sessionStorage.getItem('username'),
                     user: "20130357"
                 },
             },

@@ -60,11 +60,13 @@ const Register = () => {
         if (socket) {
             socket.onmessage = (event) => {
                 const responseData = JSON.parse(event.data);
-                if (responseData && responseData.status === "success") {
+                if (responseData && responseData.event === 'REGISTER' && responseData.status === "success") {
                     // Đăng kí thành công
                     setIsLoginSuccess(true);
                     // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-                    history.push('/'); // Chuyển đến trang chủ
+                    history.push('/login'); // Chuyển đến trang chủ
+                    alert("Đăng kí thành công")
+                    window.location.href = '/login'
                 }
                 else {
                     setError(responseData.mes);

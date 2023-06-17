@@ -1,4 +1,4 @@
-import React, {useRef,  useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import {
     MDBContainer,
@@ -63,7 +63,8 @@ export default function ChatBox(props) {
         if (chatBoxRef.current) {
             chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
-    
+
+
 
     }, [chatMess]);
     // Sắp xếp tin nhắn theo thời gian tăng dần
@@ -84,8 +85,11 @@ export default function ChatBox(props) {
     const isImage = (str) => {
         return str.includes("images");
     };
-    return (
 
+    const isOnline = (str) => {
+        return str.includes("images");
+    };
+    return (
         <><MDBTypography style={{ height: "560px", overflow: "scroll", scrollBehavior: "smooth" }} ref={chatBoxRef} listUnStyled>
             {sortedChatContent.map((mess, index) => (
                 <div key={index}>
@@ -130,9 +134,9 @@ export default function ChatBox(props) {
                                                     // Xử lý khi là hình ảnh
                                                     // Render nội dung hình ảnh
                                                     <MDBCard>
-                                                            <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
-                                                            
-                                                        </MDBCard>
+                                                        <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+
+                                                    </MDBCard>
                                                 ) : (
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
@@ -168,7 +172,8 @@ export default function ChatBox(props) {
                                 </MDBCardHeader>
                                 <MDBCardBody style={{ width: "600px" }}>
                                     <p className="mb-0 w-100">
-                                    {isLink(decodeURIComponent(mess.mes)) ? (
+                                        
+                                        {isLink(decodeURIComponent(mess.mes)) ? (
                                             linkPreviews[index] ? (
                                                 <>
                                                     <p>
@@ -198,9 +203,9 @@ export default function ChatBox(props) {
                                                     // Xử lý khi là hình ảnh
                                                     // Render nội dung hình ảnh
                                                     <MDBCard>
-                                                            <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
-                                                            
-                                                        </MDBCard>
+                                                        <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+
+                                                    </MDBCard>
                                                 ) : (
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
