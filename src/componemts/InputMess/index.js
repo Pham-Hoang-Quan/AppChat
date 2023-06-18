@@ -115,6 +115,7 @@ export default function InputMess({ handleSendMessage }) {
         alt="avatar 3"
         style={{ width: "40px", height: "100%" }}
       />
+      
       <input
         autoComplete="off"
         type="text"

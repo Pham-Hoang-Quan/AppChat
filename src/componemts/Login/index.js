@@ -77,7 +77,7 @@ const Login = () => {
       socket.onmessage = (event) => {
         const response = JSON.parse(event.data);
         if (response && response.status === "success" &&  response.event === 'LOGIN') {
-          sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+          sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE));
           console.log("Đã lưu relogin_code vào session")
         }
         if (response.status === 'success' && response.event === 'GET_USER_LIST') {
@@ -100,7 +100,6 @@ const Login = () => {
     if (isLoginSuccess) {
       // Lưu trữ thông tin đăng nhập vào localStorage
       sessionStorage.setItem('username', username);
-      sessionStorage.setItem('password', password);
     }
 
     if (socket) {
@@ -110,7 +109,7 @@ const Login = () => {
           // Đăng nhập thành công
           // setIsLoginSuccess(true);
           // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-          sessionStorage.setItem('relogin_code', responseData.data.RE_LOGIN_CODE);
+          sessionStorage.setItem('relogin_code', btoa(responseData.data.RE_LOGIN_CODE)); // ma hoa
         }
       };
     }

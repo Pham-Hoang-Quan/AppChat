@@ -16,11 +16,12 @@ import {
     MDBCardText,
     MDBCardTitle,
 } from "mdb-react-ui-kit";
+import './style.css'
 
 export default function ChatBox(props) {
 
     // const [selectedUser, setSelectedUser] = useState(null);
-    const [ visible, setVisible ] = React.useState(false);
+    const [visible, setVisible] = React.useState(false);
     const [imgSelected, setImgSelected] = useState(null);
     const { chatMess } = props;
     const [socket, setSocket] = useState(null);
@@ -92,21 +93,33 @@ export default function ChatBox(props) {
     const isOnline = (str) => {
         return str.includes("images");
     };
+
+    const timeMess = (str) => {
+        if (str) {
+            return str.substring(10);
+        }
+        return ""
+    };
+    const isImageLink = (str) => {
+        return isImage(str) || isLink(str);
+    };
+
     return (
-        <><MDBTypography style={{ height: "560px", overflow: "scroll", scrollBehavior: "smooth" }} ref={chatBoxRef} listUnStyled>
+        <><MDBTypography style={{ height: "590px", overflow: "scroll", scrollBehavior: "smooth" }} ref={chatBoxRef} listUnStyled>
             {sortedChatContent.map((mess, index) => (
                 <div key={index}>
                     {mess.name == sessionStorage.getItem('username') ? (
-                        <li style={{ width: "600px", textAlign: "right", marginLeft: "365px", }} class="d-flex mb-4 ml-300">
-                            <MDBCard className="w-100">
-                                <MDBCardHeader className="d-flex justify-content-between p-3">
+                        <li style={{}} class="d-flex mb-4 ml-300 justify-content-end">
+                            <MDBCard className="w-100 card-mess">
+                                <MDBCardHeader className="d-flex p-1 card-name" style={{ flexDirection: 'row-reverse', justifyContent: 'flex-start' }}>
                                     <p class="fw-bold mb-0">{mess.name}</p>
-                                    <p class="text-muted small mb-0">
-                                        <MDBIcon far icon="clock" /> {mess.createAt}
+                                    <p class="text-muted small mb-0 my-time" >
+                                        <MDBIcon far icon="clock" /> {timeMess(mess.createAt)}
                                     </p>
                                 </MDBCardHeader>
-                                <MDBCardBody className="btn-secondary ">
-                                    <p className="mb-0">
+                                <MDBCardBody className={isImage(decodeURIComponent(mess.mes)) ? "img my-mess flex" : " my-mess flex"}>
+                                    <p style={{}}></p>
+                                    <p className={isImageLink(decodeURIComponent(mess.mes)) ?  "mb-0 btn-secondary img" : "mb-0 btn-secondary mess"}>
                                         {isLink(decodeURIComponent(mess.mes)) ? (
                                             linkPreviews[index] ? (
                                                 <>
@@ -117,7 +130,7 @@ export default function ChatBox(props) {
                                                     </p>
                                                     <a target="_blank" href={decodeURIComponent(mess.mes)}>
                                                         <MDBCard>
-                                                            <MDBCardImage style={{ width: "50%", margin: 'auto', padding: '5px' }} src={linkPreviews[index].image} alt="Link preview" position='top' />
+                                                            <MDBCardImage style={{ width: "70%", margin: 'auto', padding: '5px' }} src={linkPreviews[index].image} alt="Link preview" position='top' />
                                                             <MDBCardBody>
                                                                 <MDBCardTitle style={{ color: "black" }}>{linkPreviews[index].title}</MDBCardTitle>
                                                                 <MDBCardText style={{ color: "black" }}>
@@ -129,7 +142,10 @@ export default function ChatBox(props) {
                                                     </a>
                                                 </>
                                             ) : (
-                                                decodeURIComponent(mess.mes)
+                                                <a href={decodeURIComponent(mess.mes)}>
+                                                    {decodeURIComponent(mess.mes)}
+                                                </a>
+                                                
                                             )
 
                                         ) : (
@@ -139,8 +155,8 @@ export default function ChatBox(props) {
                                                     // Render nội dung hình ảnh
                                                     <>
 
-                                                        <MDBCard onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) } }>
-                                                            <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+                                                        <MDBCard onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) }}>
+                                                            <MDBCardImage style={{ maxWidth: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
 
                                                         </MDBCard>
                                                         <Viewer
@@ -159,6 +175,7 @@ export default function ChatBox(props) {
                                             </>
                                         )}
                                     </p>
+                                    
 
 
                                 </MDBCardBody>
@@ -177,16 +194,17 @@ export default function ChatBox(props) {
                                 alt="avatar"
                                 className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                                 width="60" />
-                            <MDBCard>
-                                <MDBCardHeader className="d-flex justify-content-between p-3">
+                            <MDBCard className="card-mess">
+                                <MDBCardHeader className="d-flex justify-content-start p-1 card-name">
                                     <p className="fw-bold mb-0">{mess.name}</p>
-                                    <p className="text-muted small mb-0">
-                                        <MDBIcon far icon="clock" /> {mess.createAt}
+
+                                    <p className="text-muted small mb-0 timeMess">
+                                        <MDBIcon far icon="clock" /> {timeMess(mess.createAt)}
                                     </p>
                                 </MDBCardHeader>
-                                <MDBCardBody style={{ width: "600px" }}>
+                                <MDBCardBody className={isImage(decodeURIComponent(mess.mes)) ? "img" : "mess"} >
                                     <p className="mb-0 w-100">
-                                        
+
                                         {isLink(decodeURIComponent(mess.mes)) ? (
                                             linkPreviews[index] ? (
                                                 <>
@@ -196,7 +214,7 @@ export default function ChatBox(props) {
                                                         </a>
                                                     </p>
                                                     <a target="_blank" href={decodeURIComponent(mess.mes)}>
-                                                        <MDBCard>
+                                                        <MDBCard style={{ width: "500px" }}>
                                                             <MDBCardImage style={{ width: "50%", margin: 'auto', padding: '5px' }} src={linkPreviews[index].image} alt="Link preview" position='top' />
                                                             <MDBCardBody>
                                                                 <MDBCardTitle style={{ color: "black" }}>{linkPreviews[index].title}</MDBCardTitle>
@@ -218,7 +236,7 @@ export default function ChatBox(props) {
                                                     // Render nội dung hình ảnh
                                                     <>
 
-                                                        <MDBCard onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) } }>
+                                                        <MDBCard style={{ width: "100%", margin: 'auto', padding: '5px' }} onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) }}>
                                                             <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
 
                                                         </MDBCard>

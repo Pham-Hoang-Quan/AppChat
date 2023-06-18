@@ -17,9 +17,13 @@ export default function UserList({userList, handleUserClick, selectedUser}) {
     // const { selectedUser } = props;
     // const [selectedUser, setSocket] = useState(null);
 
+    const circleStyle = {
+        borderRadius: '3rem',
+      };
+    
     
     return (
-            <MDBCard>
+            <MDBCard style={circleStyle}>
                 <MDBCardBody>
                     <MDBTypography style={{ height: "560px", overflow: "scroll" }} listUnStyled className="mb-0">
 
@@ -28,7 +32,7 @@ export default function UserList({userList, handleUserClick, selectedUser}) {
                                 <li key={index}  className="p-2 border-bottom" onClick={() => handleUserClick(user.name, user.type)}>
                                     
                                     <a  
-                                        // className= "d-flex justify-content-between"
+                                        style={circleStyle}
                                         className = {selectedUser === user.name ? 'd-flex justify-content-between btn-secondary' : 'd-flex justify-content-between'}>
                                         <div className="d-flex flex-row">
                                             {user.type == 0 ? (
@@ -53,7 +57,7 @@ export default function UserList({userList, handleUserClick, selectedUser}) {
                                             </div>
                                         </div>
                                         <div className="pt-1">
-                                            <p className="small text-muted mb-1" key={index}>{user.actionTime}</p>
+                                            <p style={{marginRight: 10}} className="small text-muted mb-1" key={index}>{user.actionTime}</p>
                                         </div>
                                     </a>
                                 </li>

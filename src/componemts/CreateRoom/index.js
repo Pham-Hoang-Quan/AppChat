@@ -39,9 +39,11 @@ function handleClickJoin() {
   }
 
 }
-
+const css = {
+  justifyContent: 'center',
+};
   return (
-    <MDBRow className='gy-2 gx-3 align-items-center'>
+    <MDBRow style={css} className='gy-2 gx-3 align-items-center'>
       <MDBCol size='auto'>
         <MDBInput id='form13Example1' label='Username or RoomCode'
         value={roomName} // Gán giá trị từ state vào giá trị của thẻ input

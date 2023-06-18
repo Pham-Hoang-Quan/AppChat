@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { useHistory } from 'react-router-dom';
@@ -14,7 +14,7 @@ import {
 
 
 
-from "mdb-react-ui-kit";
+    from "mdb-react-ui-kit";
 import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
@@ -35,9 +35,9 @@ export default function Home() {
     const [members, setMembers] = useState([]);
     const [owner, setOwner] = useState(null);
 
-    
 
-   
+
+
 
 
     function handleSendMessage(message) {
@@ -142,7 +142,7 @@ export default function Home() {
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('password');
         sessionStorage.removeItem('relogin_code');
-        
+
     }
     function handleCreateRoom(roomName) {
         const requestcreateRoom = {
@@ -205,9 +205,25 @@ export default function Home() {
             },
         };
         socket.send(JSON.stringify(userList));
-        
+
 
     }
+
+    const playMessageSound = () => {
+        if (messageSoundRef.current) {
+            messageSoundRef.current.play();
+        }
+    };
+
+    const getListUser = () => {
+        const userList = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(userList));
+    };
 
     useEffect(() => {
         // Khởi tạo kết nối với server qua websocket
@@ -221,7 +237,7 @@ export default function Home() {
                     event: "RE_LOGIN",
                     data: {
                         user: sessionStorage.getItem('username'),
-                        code: sessionStorage.getItem('relogin_code')
+                        code: atob(sessionStorage.getItem('relogin_code')) // giai ma
                     }
                 }
             }
@@ -238,7 +254,7 @@ export default function Home() {
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE)
+                    sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE))
                 }
                 if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
                     const chatMess = response.data.chatData;
@@ -248,7 +264,7 @@ export default function Home() {
                     const members = response.data.userList;
                     setMembers(members);
                     console.log(members);
-                    
+
                     const own = response.data.own;
                     setOwner(own);
                     console.log(owner);
@@ -261,6 +277,9 @@ export default function Home() {
                 if (response.status === 'success' && response.event === 'SEND_CHAT') {
                     const receivedMessage = response.data;
                     setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
+                    playMessageSound();
+                    getListUser();
+
                 }
                 if (response.status === 'success' && response.event === 'CREATE_ROOM') {
                     const chatMess = response.data.chatData;
@@ -287,29 +306,34 @@ export default function Home() {
         return () => {
             socket.close();
         };
-    
+
     }, []);
 
 
 
-
+    const css = {
+        padding: '10px',
+    };
+    const messageSoundRef = useRef(null);
 
     return (
-        <><Header handleLogout = {handleLogout} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+        <><Header handleLogout={handleLogout} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
 
             <MDBRow>
                 <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
-                    <MDBCardBody>
+                    <MDBCardBody style={css}>
                         <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
                     </MDBCardBody>
 
-                    <UserList selectedUser = {selectedUser} userList={userList} handleUserClick={handleUserClick} />
+                    <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
                 </MDBCol>
                 <MDBCol md="6" lg="7" xl="8">
                     <ChatBox chatMess={chatMess} />
                     <InputMess handleSendMessage={handleSendMessage} />
                 </MDBCol>
             </MDBRow>
-        </MDBContainer></>
+        </MDBContainer >
+            <audio ref={messageSoundRef} src="./audio/thongbao.mp3" />
+        </>
     );
 }
