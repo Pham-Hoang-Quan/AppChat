@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
+import Viewer from 'react-viewer';
 import {
     MDBContainer,
     MDBRow,
@@ -19,6 +20,8 @@ import {
 export default function ChatBox(props) {
 
     // const [selectedUser, setSelectedUser] = useState(null);
+    const [ visible, setVisible ] = React.useState(false);
+    const [imgSelected, setImgSelected] = useState(null);
     const { chatMess } = props;
     const [socket, setSocket] = useState(null);
 
@@ -128,15 +131,26 @@ export default function ChatBox(props) {
                                             ) : (
                                                 decodeURIComponent(mess.mes)
                                             )
+
                                         ) : (
                                             <>
                                                 {isImage(decodeURIComponent(mess.mes)) ? (
                                                     // Xử lý khi là hình ảnh
                                                     // Render nội dung hình ảnh
-                                                    <MDBCard>
-                                                        <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+                                                    <>
 
-                                                    </MDBCard>
+                                                        <MDBCard onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) } }>
+                                                            <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+
+                                                        </MDBCard>
+                                                        <Viewer
+                                                            visible={visible}
+                                                            onClose={() => { setVisible(false); }}
+                                                            images={[{ src: imgSelected, alt: '' }]}
+                                                        />
+
+
+                                                    </>
                                                 ) : (
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
@@ -202,10 +216,18 @@ export default function ChatBox(props) {
                                                 {isImage(decodeURIComponent(mess.mes)) ? (
                                                     // Xử lý khi là hình ảnh
                                                     // Render nội dung hình ảnh
-                                                    <MDBCard>
-                                                        <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+                                                    <>
 
-                                                    </MDBCard>
+                                                        <MDBCard onClick={() => { setVisible(true); setImgSelected(decodeURIComponent(mess.mes)) } }>
+                                                            <MDBCardImage style={{ width: "100%", margin: 'auto', padding: '5px' }} src={decodeURIComponent(mess.mes)} alt="Link preview" position='top' />
+
+                                                        </MDBCard>
+                                                        <Viewer
+                                                            visible={visible}
+                                                            onClose={() => { setVisible(false); }}
+                                                            images={[{ src: imgSelected, alt: '' }]}
+                                                        />
+                                                    </>
                                                 ) : (
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
