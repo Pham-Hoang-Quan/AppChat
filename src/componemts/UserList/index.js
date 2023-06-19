@@ -25,7 +25,7 @@ export default function UserList({userList, handleUserClick, selectedUser}) {
     return (
             <MDBCard style={circleStyle}>
                 <MDBCardBody>
-                    <MDBTypography style={{ height: "560px", overflow: "scroll" }} listUnStyled className="mb-0">
+                    <MDBTypography style={{ height: "525px", overflow: "scroll" }} listUnStyled className="mb-0">
 
                         {userList.map((user, index) => (
                             <div>

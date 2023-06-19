@@ -13,31 +13,20 @@ import {
   MDBInputGroup
 } from 'mdb-react-ui-kit';
 import { useHistory } from 'react-router-dom';
-export default function Header({handleLogout}) {
+import ModalMember from "../ModalMember";
+export default function Header({ handleLogout, owner, members }) {
   const history = useHistory();
   const [socket, setSocket] = useState(null);
+
   
-  // const handleLogout = () => {
-  //   //Gửi yêu cầu đăng ký đến server WebSocket
-  //   const requestData = {
-  //     action: "onchat",
-  //     data: {
-  //       event: "LOGOUT",
-  //     },
-  //   };
-  //   history.push("/login");
-  // };
-  // useEffect(() => {
+  const [topRightModal, setTopRightModal] = useState(false);
 
-  //   localStorage.removeItem('username');
-  //   localStorage.removeItem('password');
-
-  // }, []);
+  const toggleShow = () => setTopRightModal(!topRightModal);
   const [showNavNoTogglerSecond, setShowNavNoTogglerSecond] = useState(false);
 
   return (
     <>
-      <MDBNavbar expand='lg' light bgColor='light'>
+      <MDBNavbar style={{ borderRadius: '2rem 2rem 0 0' }} expand='lg' light bgColor='light'>
         <MDBContainer fluid>
           <MDBNavbarBrand href='#'>
             <img
@@ -75,11 +64,10 @@ export default function Header({handleLogout}) {
 
             </MDBNavbarNav>
             <MDBInputGroup tag="form" className='d-flex w-auto'>
-              {/* <input className='form-control' placeholder="Type query" aria-label="Search" type='Search' /> */}
-              {/* <MDBBtn outline>Đăng xuất</MDBBtn> */}
-              <MDBBtn color='info' onClick={handleLogout}>
-                Đăng_Xuất
-              </MDBBtn>
+              <a className="ms-3" onClick={toggleShow}>
+                <MDBIcon className='fa-lg' fas icon="circle-info" />
+              </a>
+              <ModalMember members = {members} owner = {owner} toggleShow ={toggleShow} setTopRightModal = {setTopRightModal} topRightModal = {topRightModal} ></ModalMember>
             </MDBInputGroup>
           </MDBCollapse>
         </MDBContainer>

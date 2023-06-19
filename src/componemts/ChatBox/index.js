@@ -105,7 +105,7 @@ export default function ChatBox(props) {
     };
 
     return (
-        <><MDBTypography style={{ height: "590px", overflow: "scroll", scrollBehavior: "smooth" }} ref={chatBoxRef} listUnStyled>
+        <><MDBTypography style={{ height: "590px", overflow: "scroll", scrollBehavior: "smooth", borderLeft: 'white solid 5px', }} ref={chatBoxRef} listUnStyled>
             {sortedChatContent.map((mess, index) => (
                 <div key={index}>
                     {mess.name == sessionStorage.getItem('username') ? (

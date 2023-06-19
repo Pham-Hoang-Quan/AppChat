@@ -79,6 +79,10 @@ const Login = () => {
         if (response && response.status === "success" &&  response.event === 'LOGIN') {
           sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE));
           console.log("Đã lưu relogin_code vào session")
+        } 
+        if (response && response.status === "error" &&  response.event === 'LOGIN') {
+          setError(response.mes);
+          console.log(response.mes);
         }
         if (response.status === 'success' && response.event === 'GET_USER_LIST') {
           const users = response.data;
@@ -110,7 +114,12 @@ const Login = () => {
           // setIsLoginSuccess(true);
           // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
           sessionStorage.setItem('relogin_code', btoa(responseData.data.RE_LOGIN_CODE)); // ma hoa
-        }
+        } 
+        if (responseData && responseData.event === "LOGIN" && responseData.status === "error") {
+          setError(responseData.mes);
+          console.log(responseData.mes)
+        } 
+        
       };
     }
   }, [socket, isLoginSuccess, username, password]);

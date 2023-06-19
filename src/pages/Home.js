@@ -8,19 +8,17 @@ import {
     MDBContainer,
     MDBRow,
     MDBCol,
-    MDBCardBody
+    MDBCardBody,
+    MDBCard,
+    MDBCardFooter,
 }
-
-
-
-
     from "mdb-react-ui-kit";
 import UserList from "../componemts/UserList";
 import ChatBox from "../componemts/ChatBox";
 import Header from "../componemts/Header";
 import InputMess from "../componemts/InputMess";
 import CreateRoom from "../componemts/CreateRoom";
-
+import ProfileBox from "../componemts/ProfileBox";
 
 
 export default function Home() {
@@ -142,6 +140,9 @@ export default function Home() {
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('password');
         sessionStorage.removeItem('relogin_code');
+
+        window.location.href = '/login'
+                
 
     }
     function handleCreateRoom(roomName) {
@@ -278,8 +279,6 @@ export default function Home() {
                     const receivedMessage = response.data;
                     setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
                     playMessageSound();
-                    getListUser();
-
                 }
                 if (response.status === 'success' && response.event === 'CREATE_ROOM') {
                     const chatMess = response.data.chatData;
@@ -312,27 +311,49 @@ export default function Home() {
 
 
     const css = {
-        padding: '10px',
+        marginBottom: '10px',
+        borderRadius: '2rem',
     };
     const messageSoundRef = useRef(null);
 
     return (
-        <><Header handleLogout={handleLogout} /><MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+        <>
+            <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+                <MDBRow>
+                    <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                        <MDBCard style={css}>
+                            <ProfileBox handleLogout={handleLogout}/>
 
-            <MDBRow>
-                <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
-                    <MDBCardBody style={css}>
-                        <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
-                    </MDBCardBody>
+                            
+                            <MDBCardFooter background='light' border='0' className='p-2 d-flex justify-content-around'style={css}>
+                                <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
 
-                    <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
-                </MDBCol>
-                <MDBCol md="6" lg="7" xl="8">
-                    <ChatBox chatMess={chatMess} />
-                    <InputMess handleSendMessage={handleSendMessage} />
-                </MDBCol>
-            </MDBRow>
-        </MDBContainer >
+                            </MDBCardFooter>
+                        </MDBCard>
+                        <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
+
+
+                    </MDBCol>
+                    <MDBCol md="6" lg="7" xl="8">
+                        <Header members = {members} owner = {owner} handleLogout={handleLogout} />
+                        {/* <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}></MDBContainer> */}
+                        <ChatBox chatMess={chatMess} />
+                        <InputMess handleSendMessage={handleSendMessage} />
+                    
+                    </MDBCol>
+                </MDBRow>
+
+
+                {/* <MDBRow>
+                    <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                        <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
+                    </MDBCol>
+                    <MDBCol md="6" lg="7" xl="8">
+                        <ChatBox chatMess={chatMess} />
+                        <InputMess handleSendMessage={handleSendMessage} />
+                    </MDBCol>
+                </MDBRow> */}
+            </MDBContainer >
             <audio ref={messageSoundRef} src="./audio/thongbao.mp3" />
         </>
     );
