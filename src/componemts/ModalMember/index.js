@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import Viewer from 'react-viewer';
+import FsLightbox from "fslightbox-react";
+import Modal from 'react-modal';
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import {
     MDBBtn,
     MDBModal,
@@ -11,14 +16,25 @@ import {
     MDBListGroup,
     MDBListGroupItem,
     MDBBadge,
+    MDBCol,
+
+    MDBLightbox,
+    MDBRow
 
 
 } from 'mdb-react-ui-kit';
 
-export default function ModalMember({ members, topRightModal, setTopRightModal, toggleShow, owner }) {
+export default function ModalMember({ chatImg, members, topRightModal, setTopRightModal, toggleShow, owner }) {
     //   const [topRightModal, setTopRightModal] = useState(false);
 
     //   const toggleShow = () => setTopRightModal(!topRightModal);
+    const [visible, setVisible] = React.useState(false);
+    const [imgSelected, setImgSelected] = useState(null);
+
+    const [toggler, setToggler] = useState(false);
+
+    const [open, setOpen] = useState(false);
+
 
     return (
         <>
@@ -60,29 +76,71 @@ export default function ModalMember({ members, topRightModal, setTopRightModal, 
                                     </MDBBadge>
                                 </MDBListGroupItem>
                                 {members.map((user, index) => (
-                                    
+
                                     <MDBListGroupItem className='d-flex justify-content-between align-items-center'>
-                                    <div className='d-flex align-items-center'>
-                                        <img
-                                            src='./img/people.png'
-                                            alt=''
-                                            style={{ width: '45px', height: '45px' }}
-                                            className='rounded-circle'
-                                        />
-                                        <div className='ms-3'>
-                                            <p className='fw-bold mb-1'>{user.name}</p>
-                                            <p className='text-muted mb-0'>Thành viên</p>
+                                        <div className='d-flex align-items-center'>
+                                            <img
+                                                src='./img/people.png'
+                                                alt=''
+                                                style={{ width: '45px', height: '45px' }}
+                                                className='rounded-circle'
+                                            />
+                                            <div className='ms-3'>
+                                                <p className='fw-bold mb-1'>{user.name}</p>
+                                                <p className='text-muted mb-0'>Thành viên</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <MDBBadge pill light color='warning'>
-                                        Offline
-                                    </MDBBadge>
-                                </MDBListGroupItem>
+                                        <MDBBadge pill light color='warning'>
+                                            Offline
+                                        </MDBBadge>
+                                    </MDBListGroupItem>
 
                                 ))}
-                                
+
 
                             </MDBListGroup>
+                        </MDBModalBody>
+                        <MDBModalHeader className='bg-info text-white'>
+                            <MDBModalTitle>Kho ảnh</MDBModalTitle>
+                            
+                        </MDBModalHeader>
+
+
+                        <div class="lightbox">
+                            <div class="row">
+                                {chatImg.map((img, index) => (
+                                    <><div class="col-lg-3">
+                                        <img
+                                            src={img}
+                                            data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
+                                            alt="Table Full of Spices"
+                                            class="w-100" 
+                                            // onClick={() => { setVisible(true); setImgSelected({ img }); }}
+                                            ></img>
+                                    </div>
+
+                                    </>
+                                ))}
+
+                                <button color='secondary' onClick={() => setOpen(true)}>
+                                    Open Lightbox
+                                </button >
+                                <Lightbox
+                                    open={open}
+                                    close={() => setOpen(false)}
+                                    // slides={[
+                                    //     { src: "/image1.jpg" },
+                                    //     { src: "/image2.jpg" },
+                                    //     { src: "/image3.jpg" },
+                                    // ]}
+                                    slides={chatImg.map((img, index) => ({ src: img }))}
+                                />
+
+                                
+
+                            </div>
+                        </div>
+                        <MDBModalBody>
                         </MDBModalBody>
                         <MDBModalFooter>
                             <MDBBtn outline color='info' onClick={toggleShow}>

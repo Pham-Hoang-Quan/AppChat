@@ -18,7 +18,7 @@ import {
 } from "mdb-react-ui-kit";
 import './style.css'
 
-export default function ChatBox(props) {
+export default function ChatBox(props , isUserOnline) {
 
     // const [selectedUser, setSelectedUser] = useState(null);
     const [visible, setVisible] = React.useState(false);
@@ -30,47 +30,47 @@ export default function ChatBox(props) {
 
     const [linkPreviews, setLinkPreviews] = useState([]);
 
-    useEffect(() => {
-        const fetchLinkPreviews = async () => {
-            const updatedLinkPreviews = [];
+    // useEffect(() => {
+    //     const fetchLinkPreviews = async () => {
+    //         const updatedLinkPreviews = [];
 
-            for (const mess of chatMess) {
-                if (isLink(decodeURIComponent(mess.mes))) {
-                    try {
-                        // Lấy thông tin từ link
+    //         for (const mess of chatMess) {
+    //             if (isLink(decodeURIComponent(mess.mes))) {
+    //                 try {
+    //                     // Lấy thông tin từ link
 
-                        const apiKey = 'fca1f0fbda8ee17102bc3ae0f2e5d6f7'; // Thay YOUR_API_KEY bằng API key của bạn
-                        // const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(mess.mes)}`;
-                        const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(decodeURIComponent(mess.mes))}`;
-
-
-                        const response = await axios.get(url);
-
-                        updatedLinkPreviews.push(response.data);
-                        console.log(response.data);
-                    } catch (error) {
-                        console.error('Error fetching link preview:', error);
-                        updatedLinkPreviews.push(null);
-                    }
-                } else {
-                    updatedLinkPreviews.push(null);
-                }
-            }
-
-            // Cập nhật state linkPreviews
-            setLinkPreviews(updatedLinkPreviews);
-            console.log(linkPreviews)
-        };
-
-        fetchLinkPreviews();
-
-        if (chatBoxRef.current) {
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-        }
+    //                     const apiKey = 'fca1f0fbda8ee17102bc3ae0f2e5d6f7'; // Thay YOUR_API_KEY bằng API key của bạn
+    //                     // const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(mess.mes)}`;
+    //                     const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(decodeURIComponent(mess.mes))}`;
 
 
+    //                     const response = await axios.get(url);
 
-    }, [chatMess]);
+    //                     updatedLinkPreviews.push(response.data);
+    //                     console.log(response.data);
+    //                 } catch (error) {
+    //                     console.error('Error fetching link preview:', error);
+    //                     updatedLinkPreviews.push(null);
+    //                 }
+    //             } else {
+    //                 updatedLinkPreviews.push(null);
+    //             }
+    //         }
+
+    //         // Cập nhật state linkPreviews
+    //         setLinkPreviews(updatedLinkPreviews);
+    //         console.log(linkPreviews)
+    //     };
+
+    //     fetchLinkPreviews();
+
+    //     if (chatBoxRef.current) {
+    //         chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    //     }
+
+
+
+    // }, [chatMess]);
     // Sắp xếp tin nhắn theo thời gian tăng dần
     if (!chatMess || !Array.isArray(chatMess)) {
         return null;
@@ -90,9 +90,7 @@ export default function ChatBox(props) {
         return str.includes("images");
     };
 
-    const isOnline = (str) => {
-        return str.includes("images");
-    };
+    
 
     const timeMess = (str) => {
         if (str) {
@@ -119,7 +117,7 @@ export default function ChatBox(props) {
                                 </MDBCardHeader>
                                 <MDBCardBody className={isImage(decodeURIComponent(mess.mes)) ? "img my-mess flex" : " my-mess flex"}>
                                     <p style={{}}></p>
-                                    <p className={isImageLink(decodeURIComponent(mess.mes)) ?  "mb-0 btn-secondary img" : "mb-0 btn-secondary mess"}>
+                                    <p note noteColor='success' className={isImageLink(decodeURIComponent(mess.mes)) ? "mb-0 shadow-5-strong bg-info bg-opacity-25 img" : "mb-0 bg-info shadow-5-strong bg-opacity-25 mess"}>
                                         {isLink(decodeURIComponent(mess.mes)) ? (
                                             linkPreviews[index] ? (
                                                 <>
@@ -145,7 +143,7 @@ export default function ChatBox(props) {
                                                 <a href={decodeURIComponent(mess.mes)}>
                                                     {decodeURIComponent(mess.mes)}
                                                 </a>
-                                                
+
                                             )
 
                                         ) : (
@@ -175,7 +173,7 @@ export default function ChatBox(props) {
                                             </>
                                         )}
                                     </p>
-                                    
+
 
 
                                 </MDBCardBody>
@@ -194,6 +192,7 @@ export default function ChatBox(props) {
                                 alt="avatar"
                                 className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                                 width="60" />
+                            <span style={{marginLeft: '-35px', marginTop: '45px',paddingRight: '10px' }}>{isUserOnline ? <MDBIcon style={{color: 'blue'}} fas icon="circle" /> : <MDBIcon style={{color: 'black'}} fas icon="circle"  />} </span>
                             <MDBCard className="card-mess">
                                 <MDBCardHeader className="d-flex justify-content-start p-1 card-name">
                                     <p className="fw-bold mb-0">{mess.name}</p>
@@ -202,7 +201,7 @@ export default function ChatBox(props) {
                                         <MDBIcon far icon="clock" /> {timeMess(mess.createAt)}
                                     </p>
                                 </MDBCardHeader>
-                                <MDBCardBody className={isImage(decodeURIComponent(mess.mes)) ? "img" : "mess"} >
+                                <MDBCardBody className={isImage(decodeURIComponent(mess.mes)) ? "img" : "mess shadow-5 shadow-5-strong"} >
                                     <p className="mb-0 w-100">
 
                                         {isLink(decodeURIComponent(mess.mes)) ? (

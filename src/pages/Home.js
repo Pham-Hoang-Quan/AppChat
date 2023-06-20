@@ -30,11 +30,74 @@ export default function Home() {
     const [chatMess, setChatMess] = useState([]);
     const [error, setError] = useState([]);
 
+    const [chatImg, setChatImg] = useState([]);
+
     const [members, setMembers] = useState([]);
     const [owner, setOwner] = useState(null);
 
+    const [isOnline, setIsOnline] = useState(null);
 
+    // const [isUserOnline, setIsUserOnline] = useState(null);
 
+    var isUserOnline = null;
+    const isImage = (str) => {
+        return str.includes("images");
+    };
+
+    const getLinkImg = ([]) => {
+        // const updatedMessImg = [];
+
+        // if ([]) {
+
+        //     for (const mess of []) {
+        //         if (isImage(decodeURIComponent(mess.mes))) {
+        //             updatedMessImg.push(decodeURIComponent(mess.mes))
+        //         } else {
+        //             // updatedMessImg.push(null);
+        //         }
+        //     };
+        // }
+        // // console.log(updatedMessImg);
+        // setChatImg(updatedMessImg);
+    }
+
+    const checkMember = () => {
+        const updatedMembers = members.map((member) => ({
+            ...member,
+            isOnline: false,
+        }));
+
+        members.forEach((member, index) => {
+            const checkUserRequest = {
+                action: "onchat",
+                data: {
+                    event: "CHECK_USER",
+                    data: {
+                        user: member.name,
+                    },
+                },
+            };
+
+            socket.send(JSON.stringify(checkUserRequest));
+
+            // Xử lý phản hồi từ máy chủ
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                if (response.event === "CHECK_USER" && response.status === "success") {
+                    const userStatus = response.data.status;
+
+                    // Cập nhật userStatus trong mảng updatedMembers
+                    // updatedMembers[index].isOnline = userStatus;
+                    updatedMembers[index].isOnline = false;
+                    // Kiểm tra nếu đã cập nhật xong tất cả thành viên
+
+                    setMembers(updatedMembers);
+                }
+            };
+        });
+        console.log(updatedMembers)
+        console.log(members)
+    };
 
 
 
@@ -101,6 +164,7 @@ export default function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMess));
             console.log("Đã gửi yêu cầu get room chat mes");
+            // checkMember();
         } else {
             setTypeSend("people");
             console.log("đã biết type = 1 và user là " + userName)
@@ -127,7 +191,11 @@ export default function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMess));
             console.log("Đã gửi yêu cầu get people chat mes");
+            setMembers([]);
+            checkUser(userName);
+
         }
+
     }
     function handleLogout() {
         const requestLogout = {
@@ -142,7 +210,7 @@ export default function Home() {
         sessionStorage.removeItem('relogin_code');
 
         window.location.href = '/login'
-                
+
 
     }
     function handleCreateRoom(roomName) {
@@ -226,6 +294,20 @@ export default function Home() {
         socket.send(JSON.stringify(userList));
     };
 
+    const checkUser = (user) => {
+        const checkUser = {
+            action: "onchat",
+            data: {
+                event: "CHECK_USER",
+                data: {
+                    user: user
+                },
+            },
+        };
+        socket.send(JSON.stringify(checkUser));
+    };
+
+
     useEffect(() => {
         // Khởi tạo kết nối với server qua websocket
         const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
@@ -269,6 +351,8 @@ export default function Home() {
                     const own = response.data.own;
                     setOwner(own);
                     console.log(owner);
+
+                    checkMember();
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
                     const chatMess = response.data;
@@ -297,6 +381,19 @@ export default function Home() {
                     const users = response.data;
                     setUserList(users);
                 }
+                if (response.status === 'success' && response.event === 'CHECK_USER') {
+                    const status = response.data.status;
+                    isUserOnline = status;
+                    // setIsUserOnline(status);
+                    console.log(status);
+                    console.log(isUserOnline);
+                    if(status === 'true') {
+                        localStorage.setItem('isOnline', 'Đang hoạt động');
+                    } else {
+                        localStorage.setItem('isOnline', '');
+                    }
+                    
+                }
             }
 
             setSocket(socket);
@@ -322,10 +419,10 @@ export default function Home() {
                 <MDBRow>
                     <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
                         <MDBCard style={css}>
-                            <ProfileBox handleLogout={handleLogout}/>
+                            <ProfileBox handleLogout={handleLogout} />
 
-                            
-                            <MDBCardFooter background='light' border='0' className='p-2 d-flex justify-content-around'style={css}>
+
+                            <MDBCardFooter background='light' border='0' className='p-2 d-flex justify-content-around' style={css}>
                                 <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
 
                             </MDBCardFooter>
@@ -335,11 +432,13 @@ export default function Home() {
 
                     </MDBCol>
                     <MDBCol md="6" lg="7" xl="8">
-                        <Header members = {members} owner = {owner} handleLogout={handleLogout} />
+                        <Header chatMess={chatMess} selectedUserType={selectedUserType} isUserOnline={isUserOnline}
+                         selectedUser={selectedUser} checkMember={checkMember} checkUser={checkUser} members={members}
+                          owner={owner} handleLogout={handleLogout} chatImg = {chatImg} getLinkImg = {getLinkImg} />
                         {/* <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}></MDBContainer> */}
-                        <ChatBox chatMess={chatMess} />
+                        <ChatBox isUserOnline={isUserOnline} chatMess={chatMess} />
                         <InputMess handleSendMessage={handleSendMessage} />
-                    
+
                     </MDBCol>
                 </MDBRow>
 
