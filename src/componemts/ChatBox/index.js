@@ -169,6 +169,8 @@ export default function ChatBox(props , isUserOnline) {
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
                                                     decodeURIComponent(mess.mes)
+                                                    // mess.mes
+
                                                 )}
                                             </>
                                         )}
@@ -227,6 +229,7 @@ export default function ChatBox(props , isUserOnline) {
                                                 </>
                                             ) : (
                                                 decodeURIComponent(mess.mes)
+                                                // mess.mes
                                             )
                                         ) : (
                                             <>
@@ -249,6 +252,7 @@ export default function ChatBox(props , isUserOnline) {
                                                     // Xử lý khi không phải hình ảnh
                                                     // Render nội dung tin nhắn
                                                     decodeURIComponent(mess.mes)
+                                                    // mess.mes
                                                 )}
                                             </>
                                         )}

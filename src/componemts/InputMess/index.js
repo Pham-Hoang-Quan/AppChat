@@ -10,13 +10,21 @@ import {
   MDBTypography,
   MDBTextArea,
   MDBCardHeader,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModal,
+  MDBModalBody,
+  MDBModalFooter
+
 } from "mdb-react-ui-kit";
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import firebase from "firebase/compat/app";
 import './inputCss.css';
 
-import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -58,6 +66,11 @@ export default function InputMess({ handleSendMessage }) {
 
   const fileInputImage = useRef();
 
+  const [basicModal, setBasicModal] = useState(false);
+
+  const toggleShow = () => setBasicModal(!basicModal);
+
+
 
   function handleChange(e) {
 
@@ -84,38 +97,38 @@ export default function InputMess({ handleSendMessage }) {
     const storageRef = ref(storage, "images/" + file.name); // Sử dụng child() để tạo thư mục con
 
     uploadBytes(storageRef, file)
-        .then((snapshot) => {
-            console.log("Upload complete");
-            // Lấy đường dẫn tải xuống
-            return getDownloadURL(snapshot.ref);
+      .then((snapshot) => {
+        console.log("Upload complete");
+        // Lấy đường dẫn tải xuống
+        return getDownloadURL(snapshot.ref);
 
-        })
-        .then((downloadURL) => {
-            // Handle việc hiển thị hình ảnh trong chatBox
-            console.log("Download URL:", downloadURL);
+      })
+      .then((downloadURL) => {
+        // Handle việc hiển thị hình ảnh trong chatBox
+        console.log("Download URL:", downloadURL);
 
-            // Gửi đường dẫn tải xuống đến hàm handleSendMessage để hiển thị trong chatBox
-            handleSendMessage(downloadURL);
-            
-            // Cập nhật giá trị của mess (nếu cần)
-            // setMess(downloadURL);
-        })
-        .catch((error) => {
-            console.error("Upload error:", error);
-            // Xử lý lỗi nếu cần
-        });
-}
+        // Gửi đường dẫn tải xuống đến hàm handleSendMessage để hiển thị trong chatBox
+        handleSendMessage(downloadURL);
+
+        // Cập nhật giá trị của mess (nếu cần)
+        // setMess(downloadURL);
+      })
+      .catch((error) => {
+        console.error("Upload error:", error);
+        // Xử lý lỗi nếu cần
+      });
+  }
 
 
   return (
-    
-    <div className="text-muted d-flex justify-content-start align-items-center pe-3 mt-2">
+
+    <><div className="text-muted d-flex justify-content-start align-items-center pe-3 mt-2">
       <img
         src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
         alt="avatar 3"
         style={{ width: "40px", height: "100%" }}
-      />
-      
+        onClick={toggleShow} />
+
       <input
         autoComplete="off"
         type="text"
@@ -124,15 +137,12 @@ export default function InputMess({ handleSendMessage }) {
         placeholder="Type message"
         value={message} // Gán giá trị từ state vào giá trị của thẻ input
         onChange={handleChange} // Gắn sự kiện onChange để cập nhật state khi nhập liệu vào thẻ input
-        onKeyPress={keyClickEnter}
-
-      />
+        onKeyPress={keyClickEnter} />
       <input
         type="file"
         style={{ display: "none" }}
         ref={fileInputImage}
-        onChange={handleUploadImage}
-      />
+        onChange={handleUploadImage} />
       <a
         className="ms-3 text-muted"
         onClick={() => fileInputImage.current.click()}
@@ -141,21 +151,42 @@ export default function InputMess({ handleSendMessage }) {
       </a>
 
       <a className="ms-3 text-muted" href="#!">
-        <MDBIcon fas icon="smile"  onClick={() => setShowPicker(!showPicker)} />
-          <div className="emoji-picker">
-              {showPicker && <Picker
-          data={data} 
-          
-          onEmojiSelect={(e)=>{setMessage(message+e.native);
-            setShowPicker(!showPicker)
-          }}
-          />}
-          </div>
+        <MDBIcon fas icon="smile" onClick={() => setShowPicker(!showPicker)} />
+        <div className="emoji-picker">
+          {showPicker && <Picker
+            data={data}
+
+            onEmojiSelect={(e) => {
+              setMessage(message + e.native);
+              setShowPicker(!showPicker);
+            }} />}
+        </div>
       </a>
       <a className="ms-3" onClick={handleClick}>
         <MDBIcon fas icon="paper-plane" />
       </a>
-    </div>
-
+    </div><MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
+        <MDBModalDialog>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBModalTitle>Modal title</MDBModalTitle>
+              <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>
+              <iframe
+                allow="microphone;"
+                width="450"
+                height="430"
+                src="https://console.dialogflow.com/api-client/demo/embedded/512d5ffe-31f4-4637-88c6-ddab6b2e2b2e">
+              </iframe>
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color='secondary' onClick={toggleShow}>
+                Close
+              </MDBBtn>
+            </MDBModalFooter>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal></>
   );
 }

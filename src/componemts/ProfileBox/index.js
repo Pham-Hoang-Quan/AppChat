@@ -18,7 +18,7 @@ import {
 
 
 
-export default function ProfileBox({handleLogout, handleJoinPeople}) {
+export default function ProfileBox({handleLogout, handleJoinPeople, getListUser}) {
     const [roomName, setRoomName] = useState('');
     const [mess, setMess] = useState('');
     const [staticModal, setStaticModal] = useState(false);
@@ -38,6 +38,7 @@ export default function ProfileBox({handleLogout, handleJoinPeople}) {
             setRoomName('');
             setMess('');
             toggleShow();
+            getListUser();
         }
     }
 
@@ -72,16 +73,16 @@ export default function ProfileBox({handleLogout, handleJoinPeople}) {
                                               value={roomName} // Gán giá trị từ state vào giá trị của thẻ input
                                               onChange={handleChange1} // Gắn sự kiện onChange để cập nhật state khi nhập liệu vào thẻ input
                                               style={{marginBottom: '10px'}}/>
-                                    <MDBInput id='form13Example1' label='Soạn tin nhắn'
+                                    <MDBInput id='form13Example1' label='Tin nhắn'
                                               value={mess} // Gán giá trị từ state vào giá trị của thẻ input
                                               onChange={handleChange2} // Gắn sự kiện onChange để cập nhật state khi nhập liệu vào thẻ input
                                               />
                                 </MDBModalBody>
                                 <MDBModalFooter>
                                     <MDBBtn color='secondary' onClick={toggleShow}>
-                                        Close
+                                        Hủy
                                     </MDBBtn>
-                                    <MDBBtn onClick={joinPeople}>Join</MDBBtn>
+                                    <MDBBtn onClick={joinPeople}>Gửi</MDBBtn>
                                 </MDBModalFooter>
                             </MDBModalContent>
                         </MDBModalDialog>

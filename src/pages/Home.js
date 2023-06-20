@@ -1,7 +1,7 @@
-import React, {useRef, useState, useEffect} from "react";
-import {useLocation} from 'react-router-dom';
-import {createBrowserHistory} from 'history';
-import {useHistory} from 'react-router-dom';
+import React, { useRef, useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { useHistory } from 'react-router-dom';
 
 import {
     MDBContainer,
@@ -98,9 +98,34 @@ export default function Home() {
         console.log(members)
     };
 
+    // Encode a string to a UTF-8 byte array, thêm 1 text ở đầu để phân biệt nó với các tin nhắn khác chưa encode
+    function encode(text) {
+        const encoder = new TextEncoder();
+        return "encode" + encoder.encode(text).toString();
+    }
+
+    // Decode a UTF-8 byte array to a string
+    //decode những tin nhắn mà đã encode theo project
+    function decode(encodedText) {
+        const decoder = new TextDecoder();
+        //Kiểm tra xem có phải text mà project decode hay không
+        if (!encodedText.includes("encode")) {
+            return encodedText;
+        }
+        try {
+            encodedText = encodedText.replace('encode', '');
+            const byteArray = new Uint8Array(encodedText.split(',').map(byte => parseInt(byte)));
+            return decoder.decode(byteArray);
+        } catch (error) {
+            return encodedText;
+        }
+
+    }
 
     function handleSendMessage(message) {
-        const encodedMessage = encodeURIComponent(message);
+        var encodedMessage = encodeURIComponent(message);
+        
+    
         const chatData = {
             action: 'onchat',
             data: {
@@ -328,13 +353,13 @@ export default function Home() {
 
 
 
-useEffect(() => {
-    // Khởi tạo kết nối với server qua websocket
-    const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-    socket.addEventListener("open", () => {
-        console.log("WebSocket connection established.");
-        // Gửi message RE_LOGIN để đăng nhập lại với thông tin user và code
-        socket.send(JSON.stringify({
+    useEffect(() => {
+        // Khởi tạo kết nối với server qua websocket
+        const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+        socket.addEventListener("open", () => {
+            console.log("WebSocket connection established.");
+            // Gửi message RE_LOGIN để đăng nhập lại với thông tin user và code
+            socket.send(JSON.stringify({
                 action: "onchat",
                 data: {
                     event: "RE_LOGIN",
@@ -344,126 +369,136 @@ useEffect(() => {
                     }
                 }
             }
-        ))
-        ;
-        socket.send(JSON.stringify({
+            ))
+                ;
+            socket.send(JSON.stringify({
                 action: 'onchat',
                 data: {
                     event: 'GET_USER_LIST',
                 },
             }
-        ))
-        ;
-        socket.onmessage = (event) => {
-            const response = JSON.parse(event.data);
-            if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE))
-            }
-            if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                const chatMess = response.data.chatData;
-                setChatMess(chatMess);
-                console.log(chatMess);
-
-                const members = response.data.userList;
-                setMembers(members);
-                console.log(members);
-
-                const own = response.data.own;
-                setOwner(own);
-                console.log(owner);
-
-                checkMember();
-            }
-            if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
-                const chatMess = response.data;
-                setChatMess(chatMess);
-                console.log(chatMess)
-            }
-            if (response.status === 'success' && response.event === 'SEND_CHAT') {
-                const receivedMessage = response.data;
-                setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
-                playMessageSound();
-            }
-            if (response.status === 'success' && response.event === 'CREATE_ROOM') {
-                const chatMess = response.data.chatData;
-                setChatMess(chatMess);
-            }
-            if (response.status === 'error' && response.event === 'CREATE_ROOM') {
-                alert(response.mes)
-            }
-            if (response.status === 'success' && response.event === 'JOIN_ROOM') {
-                const receivedJoinRoomName = response.data;
-            }
-            if (response.status === 'error' && response.event === 'JOIN_ROOM') {
-                alert(response.mes)
-            }
-            if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-                const users = response.data;
-                setUserList(users);
-            }
-            if (response.status === 'success' && response.event === 'CHECK_USER') {
-                const status = response.data.status;
-                isUserOnline = status;
-                // setIsUserOnline(status);
-                console.log(status);
-                console.log(isUserOnline);
-                if (status === 'true') {
-                    localStorage.setItem('isOnline', 'Đang hoạt động');
-                } else {
-                    localStorage.setItem('isOnline', '');
+            ))
+                ;
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                if (response.status === 'success' && response.event === 'RE_LOGIN') {
+                    sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE))
                 }
+                if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+                    const chatMess = response.data.chatData;
+                    setChatMess(chatMess);
+                    console.log(chatMess);
 
+                    const members = response.data.userList;
+                    setMembers(members);
+                    console.log(members);
+
+                    const own = response.data.own;
+                    setOwner(own);
+                    console.log(owner);
+
+                    // checkMember();
+                }
+                if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
+                    const chatMess = response.data;
+                    setChatMess(chatMess);
+                    console.log(chatMess)
+                }
+                if (response.status === 'success' && response.event === 'SEND_CHAT') {
+                    const receivedMessage = response.data;
+                    setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
+                    playMessageSound();
+
+                    const userList = {
+                        action: 'onchat',
+                        data: {
+                            event: 'GET_USER_LIST',
+                        },
+                    };
+                    socket.send(JSON.stringify(userList));
+
+                }
+                if (response.status === 'success' && response.event === 'CREATE_ROOM') {
+                    const chatMess = response.data.chatData;
+                    setChatMess(chatMess);
+                }
+                if (response.status === 'error' && response.event === 'CREATE_ROOM') {
+                    alert(response.mes)
+                }
+                if (response.status === 'success' && response.event === 'JOIN_ROOM') {
+                    const receivedJoinRoomName = response.data;
+                }
+                if (response.status === 'error' && response.event === 'JOIN_ROOM') {
+                    alert(response.mes)
+                }
+                if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+                    const users = response.data;
+                    setUserList(users);
+                }
+                if (response.status === 'success' && response.event === 'CHECK_USER') {
+                    const status = response.data.status;
+                    localStorage.setItem('isOnline', status);
+                    isUserOnline = status;
+                    // setIsUserOnline(status);
+                    console.log(status);
+                    console.log(isUserOnline);
+                    if (status === 'true') {
+                        localStorage.setItem('isOnline', 'Đang hoạt động');
+                    } else {
+                        localStorage.setItem('isOnline', '');
+                    }
+
+                }
             }
-        }
 
-        setSocket(socket);
-    });
-    // Đóng kết nối khi component unmount
-    return () => {
-        socket.close();
+            setSocket(socket);
+        });
+        // Đóng kết nối khi component unmount
+        return () => {
+            socket.close();
+        };
+
+    }, []);
+
+
+    const css = {
+        marginBottom: '10px',
+        borderRadius: '2rem',
     };
+    const messageSoundRef = useRef(null);
 
-}, []);
+    return (
+        <>
+            <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}>
+                <MDBRow>
+                    <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                        <MDBCard style={css}>
+                            <ProfileBox getListUser={getListUser} handleLogout={handleLogout} handleJoinPeople={handleJoinPeople} />
 
+                            <MDBCardFooter background='light' border='0' className='p-2 d-flex justify-content-around'
+                                style={css}>
+                                <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} />
 
-const css = {
-    marginBottom: '10px',
-    borderRadius: '2rem',
-};
-const messageSoundRef = useRef(null);
-
-return (
-    <>
-        <MDBContainer fluid className="py-2" style={{backgroundColor: "#eee"}}>
-            <MDBRow>
-                <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
-                    <MDBCard style={css}>
-                        <ProfileBox handleLogout={handleLogout} handleJoinPeople={handleJoinPeople}/>
-
-                        <MDBCardFooter background='light' border='0' className='p-2 d-flex justify-content-around'
-                                       style={css}>
-                            <CreateRoom handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}/>
-
-                        </MDBCardFooter>
-                    </MDBCard>
-                    <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick}/>
+                            </MDBCardFooter>
+                        </MDBCard>
+                        <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
 
 
-                </MDBCol>
-                <MDBCol md="6" lg="7" xl="8">
-                    <Header chatMess={chatMess} selectedUserType={selectedUserType} isUserOnline={isUserOnline}
+                    </MDBCol>
+                    <MDBCol md="6" lg="7" xl="8">
+                        <Header chatMess={chatMess} selectedUserType={selectedUserType} isUserOnline={isUserOnline}
                             selectedUser={selectedUser} checkMember={checkMember} checkUser={checkUser}
                             members={members}
-                            owner={owner} handleLogout={handleLogout} chatImg={chatImg} getLinkImg={getLinkImg}/>
-                    {/* <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}></MDBContainer> */}
-                    <ChatBox isUserOnline={isUserOnline} chatMess={chatMess}/>
-                    <InputMess handleSendMessage={handleSendMessage}/>
+                            owner={owner} handleLogout={handleLogout} chatImg={chatImg} getLinkImg={getLinkImg} />
+                        {/* <MDBContainer fluid className="py-2" style={{ backgroundColor: "#eee" }}></MDBContainer> */}
+                        <ChatBox isUserOnline={isUserOnline} chatMess={chatMess} />
+                        <InputMess handleSendMessage={handleSendMessage} />
 
-                </MDBCol>
-            </MDBRow>
+                    </MDBCol>
+                </MDBRow>
 
 
-            {/* <MDBRow>
+                {/* <MDBRow>
                     <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
                         <UserList selectedUser={selectedUser} userList={userList} handleUserClick={handleUserClick} />
                     </MDBCol>
@@ -472,8 +507,8 @@ return (
                         <InputMess handleSendMessage={handleSendMessage} />
                     </MDBCol>
                 </MDBRow> */}
-        </MDBContainer>
-        <audio ref={messageSoundRef} src="./audio/thongbao.mp3"/>
-    </>
-);
+            </MDBContainer>
+            <audio ref={messageSoundRef} src="./audio/thongbao.mp3" />
+        </>
+    );
 }
