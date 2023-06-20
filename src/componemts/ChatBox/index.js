@@ -30,47 +30,47 @@ export default function ChatBox(props , isUserOnline) {
 
     const [linkPreviews, setLinkPreviews] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchLinkPreviews = async () => {
-    //         const updatedLinkPreviews = [];
+    useEffect(() => {
+        const fetchLinkPreviews = async () => {
+            const updatedLinkPreviews = [];
 
-    //         for (const mess of chatMess) {
-    //             if (isLink(decodeURIComponent(mess.mes))) {
-    //                 try {
-    //                     // Lấy thông tin từ link
+            for (const mess of chatMess) {
+                if (isLink(decodeURIComponent(mess.mes))) {
+                    try {
+                        // Lấy thông tin từ link
 
-    //                     const apiKey = 'fca1f0fbda8ee17102bc3ae0f2e5d6f7'; // Thay YOUR_API_KEY bằng API key của bạn
-    //                     // const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(mess.mes)}`;
-    //                     const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(decodeURIComponent(mess.mes))}`;
-
-
-    //                     const response = await axios.get(url);
-
-    //                     updatedLinkPreviews.push(response.data);
-    //                     console.log(response.data);
-    //                 } catch (error) {
-    //                     console.error('Error fetching link preview:', error);
-    //                     updatedLinkPreviews.push(null);
-    //                 }
-    //             } else {
-    //                 updatedLinkPreviews.push(null);
-    //             }
-    //         }
-
-    //         // Cập nhật state linkPreviews
-    //         setLinkPreviews(updatedLinkPreviews);
-    //         console.log(linkPreviews)
-    //     };
-
-    //     fetchLinkPreviews();
-
-    //     if (chatBoxRef.current) {
-    //         chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    //     }
+                        const apiKey = 'fca1f0fbda8ee17102bc3ae0f2e5d6f7'; // Thay YOUR_API_KEY bằng API key của bạn
+                        // const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(mess.mes)}`;
+                        const url = `https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(decodeURIComponent(mess.mes))}`;
 
 
+                        const response = await axios.get(url);
 
-    // }, [chatMess]);
+                        updatedLinkPreviews.push(response.data);
+                        console.log(response.data);
+                    } catch (error) {
+                        console.error('Error fetching link preview:', error);
+                        updatedLinkPreviews.push(null);
+                    }
+                } else {
+                    updatedLinkPreviews.push(null);
+                }
+            }
+
+            // Cập nhật state linkPreviews
+            setLinkPreviews(updatedLinkPreviews);
+            console.log(linkPreviews)
+        };
+
+        fetchLinkPreviews();
+
+        if (chatBoxRef.current) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+
+
+
+    }, [chatMess]);
     // Sắp xếp tin nhắn theo thời gian tăng dần
     if (!chatMess || !Array.isArray(chatMess)) {
         return null;
@@ -128,9 +128,9 @@ export default function ChatBox(props , isUserOnline) {
                                                     </p>
                                                     <a target="_blank" href={decodeURIComponent(mess.mes)}>
                                                         <MDBCard>
-                                                            <MDBCardImage style={{ width: "70%", margin: 'auto', padding: '5px' }} src={linkPreviews[index].image} alt="Link preview" position='top' />
+                                                            <MDBCardImage style={{ width: "25%", margin: 'auto', padding: '5px' }} src={linkPreviews[index].image} alt="Link preview" position='top' />
                                                             <MDBCardBody>
-                                                                <MDBCardTitle style={{ color: "black" }}>{linkPreviews[index].title}</MDBCardTitle>
+                                                                <MDBCardTitle style={{ color: "black"  }}>{linkPreviews[index].title}</MDBCardTitle>
                                                                 <MDBCardText style={{ color: "black" }}>
                                                                     {linkPreviews[index].description}
                                                                 </MDBCardText>
