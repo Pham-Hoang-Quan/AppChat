@@ -33,7 +33,7 @@ export default function ModalMember({ chatImg, members, topRightModal, setTopRig
 
     const [toggler, setToggler] = useState(false);
 
-    const [open, setOpen] = useState(false);
+    const [open1, setOpen1] = useState(false);
 
 
     return (
@@ -48,61 +48,67 @@ export default function ModalMember({ chatImg, members, topRightModal, setTopRig
             >
                 <MDBModalDialog position='top-right' side>
                     <MDBModalContent>
-                        <MDBModalHeader className='bg-info text-white'>
-                            <MDBModalTitle>Thành viên trong nhóm</MDBModalTitle>
-                            <MDBBtn
-                                color='none'
-                                className='btn-close btn-close-white'
-                                onClick={toggleShow}
-                            ></MDBBtn>
-                        </MDBModalHeader>
-                        <MDBModalBody>
-                            <MDBListGroup style={{ minWidth: '22rem' }} light>
-                                <MDBListGroupItem className='d-flex justify-content-between align-items-center'>
-                                    <div className='d-flex align-items-center'>
-                                        <img
-                                            src='./img/people.png'
-                                            alt=''
-                                            style={{ width: '45px', height: '45px' }}
-                                            className='rounded-circle'
-                                        />
-                                        <div className='ms-3'>
-                                            <p className='fw-bold mb-1'>{owner}</p>
-                                            <p className='text-muted mb-0'>Nhóm trưởng</p>
-                                        </div>
-                                    </div>
-                                    <MDBBadge pill light color='success'>
-                                        Online
-                                    </MDBBadge>
-                                </MDBListGroupItem>
-                                {members.map((user, index) => (
-
-                                    <MDBListGroupItem className='d-flex justify-content-between align-items-center'>
-                                        <div className='d-flex align-items-center'>
-                                            <img
-                                                src='./img/people.png'
-                                                alt=''
-                                                style={{ width: '45px', height: '45px' }}
-                                                className='rounded-circle'
-                                            />
-                                            <div className='ms-3'>
-                                                <p className='fw-bold mb-1'>{user.name}</p>
-                                                <p className='text-muted mb-0'>Thành viên</p>
+                        {(members.length > 0) ? (
+                            <><MDBModalHeader className='bg-info text-white'>
+                                <MDBModalTitle>Thành viên trong nhóm</MDBModalTitle>
+                                <MDBBtn
+                                    color='none'
+                                    className='btn-close btn-close-white'
+                                    onClick={toggleShow}
+                                ></MDBBtn>
+                            </MDBModalHeader><MDBModalBody>
+                                    <MDBListGroup style={{ minWidth: '22rem' }} light>
+                                        <MDBListGroupItem className='d-flex justify-content-between align-items-center'>
+                                            <div className='d-flex align-items-center'>
+                                                <img
+                                                    src='./img/people.png'
+                                                    alt=''
+                                                    style={{ width: '45px', height: '45px' }}
+                                                    className='rounded-circle' />
+                                                <div className='ms-3'>
+                                                    <p className='fw-bold mb-1'>{owner}</p>
+                                                    <p className='text-muted mb-0'>Nhóm trưởng</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <MDBBadge pill light color='warning'>
-                                            Offline
-                                        </MDBBadge>
-                                    </MDBListGroupItem>
+                                            <MDBBadge pill light color='success'>
+                                                Online
+                                            </MDBBadge>
+                                        </MDBListGroupItem>
+                                        {members.map((user, index) => (
 
-                                ))}
+                                            <MDBListGroupItem className='d-flex justify-content-between align-items-center'>
+                                                <div className='d-flex align-items-center'>
+                                                    <img
+                                                        src='./img/people.png'
+                                                        alt=''
+                                                        style={{ width: '45px', height: '45px' }}
+                                                        className='rounded-circle' />
+                                                    <div className='ms-3'>
+                                                        <p className='fw-bold mb-1'>{user.name}</p>
+                                                        <p className='text-muted mb-0'>Thành viên</p>
+                                                    </div>
+                                                </div>
+                                                <MDBBadge pill light color='warning'>
+                                                    Offline
+                                                </MDBBadge>
+                                            </MDBListGroupItem>
+
+                                        ))}
 
 
-                            </MDBListGroup>
-                        </MDBModalBody>
+                                    </MDBListGroup>
+                                </MDBModalBody></>
+                        ) : (
+                            <div color='btn-secondary' onClick={() => setOpen1(true)}>
+                                
+                            </div >
+                        )}
+
                         <MDBModalHeader className='bg-info text-white'>
                             <MDBModalTitle>Kho ảnh</MDBModalTitle>
-                            
+                            <div style={{color:'white'}} color='secondary' className='btn btn-outline-secondary te' onClick={() => setOpen1(true)}>
+                                Xem ảnh
+                            </div >
                         </MDBModalHeader>
 
 
@@ -113,21 +119,19 @@ export default function ModalMember({ chatImg, members, topRightModal, setTopRig
                                         <img
                                             src={img}
                                             data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Slides/1.webp"
-                                            alt="Table Full of Spices"
-                                            class="w-100" 
-                                            // onClick={() => { setVisible(true); setImgSelected({ img }); }}
-                                            ></img>
+                                            alt="Ảnh không xác định"
+                                            class="w-100"
+                                        // onClick={() => { setVisible(true); setImgSelected({ img }); }}
+                                        ></img>
                                     </div>
 
                                     </>
                                 ))}
 
-                                <button color='secondary' onClick={() => setOpen(true)}>
-                                    Open Lightbox
-                                </button >
+
                                 <Lightbox
-                                    open={open}
-                                    close={() => setOpen(false)}
+                                    open={open1}
+                                    close={() => setOpen1(false)}
                                     // slides={[
                                     //     { src: "/image1.jpg" },
                                     //     { src: "/image2.jpg" },
@@ -135,9 +139,6 @@ export default function ModalMember({ chatImg, members, topRightModal, setTopRig
                                     // ]}
                                     slides={chatImg.map((img, index) => ({ src: img }))}
                                 />
-
-                                
-
                             </div>
                         </div>
                         <MDBModalBody>

@@ -285,13 +285,23 @@ export default function Home() {
     };
 
     const getListUser = () => {
-        const userList = {
+        setSocket(new WebSocket("ws://140.238.54.136:8080/chat/chat"))
+        if(socket) {
+            const userList = {
             action: 'onchat',
             data: {
                 event: 'GET_USER_LIST',
             },
         };
         socket.send(JSON.stringify(userList));
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            // Cập nhật danh sách người dùng với dữ liệu mới
+            setUserList(data.userList);
+          };
+        }
+        
     };
 
     const checkUser = (user) => {
@@ -363,6 +373,8 @@ export default function Home() {
                     const receivedMessage = response.data;
                     setChatMess((prevChatMess) => [...prevChatMess, receivedMessage]);
                     playMessageSound();
+                    // getListUser();
+
                 }
                 if (response.status === 'success' && response.event === 'CREATE_ROOM') {
                     const chatMess = response.data.chatData;
