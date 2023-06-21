@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/AppChat/static/css/main.a5d353ff.css",
+    "main.js": "/AppChat/static/js/main.249edda5.js",
+    "static/js/787.28cb0dcd.chunk.js": "/AppChat/static/js/787.28cb0dcd.chunk.js",
+    "static/media/fa-solid-900.ttf": "/AppChat/static/media/fa-solid-900.4a2cd718d7031b732e76.ttf",
+    "static/media/fa-brands-400.ttf": "/AppChat/static/media/fa-brands-400.150de8eaa454d669c405.ttf",
+    "static/media/fa-solid-900.woff2": "/AppChat/static/media/fa-solid-900.bb975c966c37455a1bc3.woff2",
+    "static/media/fa-brands-400.woff2": "/AppChat/static/media/fa-brands-400.e033a13ee751afc1860c.woff2",
+    "static/media/fa-regular-400.ttf": "/AppChat/static/media/fa-regular-400.d87474231f4192884802.ttf",
+    "static/media/fa-regular-400.woff2": "/AppChat/static/media/fa-regular-400.3223dc79c1adee56370b.woff2",
+    "static/media/fa-v4compatibility.ttf": "/AppChat/static/media/fa-v4compatibility.0e3a648be390bd8cb094.ttf",
+    "static/media/fa-v4compatibility.woff2": "/AppChat/static/media/fa-v4compatibility.68577e40f3e70067b5da.woff2",
+    "index.html": "/AppChat/index.html",
+    "main.a5d353ff.css.map": "/AppChat/static/css/main.a5d353ff.css.map",
+    "main.249edda5.js.map": "/AppChat/static/js/main.249edda5.js.map",
+    "787.28cb0dcd.chunk.js.map": "/AppChat/static/js/787.28cb0dcd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a5d353ff.css",
+    "static/js/main.249edda5.js"
+  ]
+}
