@@ -1,4 +1,8 @@
-# Getting Started with Create React App
+# Báo cáo được 9 điểm
+
+Phạm Hoàng Quân
+Nguyễn Thị Tiên
+Vương Khánh Như
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
